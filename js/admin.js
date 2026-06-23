@@ -1,6 +1,36 @@
 const SUPABASE_URL = "https://qlendzkfsfwxipgafyqd.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_fN070j6KwDecyffZ-QWW8A_ozmZLXvJ";
 
+const USUARIO_ADMIN = "admin";
+const SENHA_ADMIN = "Labor@2026";
+
+function fazerLogin() {
+  const usuario = document.getElementById("usuario").value.trim();
+  const senha = document.getElementById("senha").value.trim();
+
+  if (usuario === USUARIO_ADMIN && senha === SENHA_ADMIN) {
+    localStorage.setItem("labor_admin_logado", "sim");
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("painelCard").style.display = "block";
+    carregarDenuncias();
+  } else {
+    document.getElementById("erroLogin").innerText = "Usuário ou senha inválidos.";
+  }
+}
+
+function sair() {
+  localStorage.removeItem("labor_admin_logado");
+  location.reload();
+}
+
+window.addEventListener("load", () => {
+  if (localStorage.getItem("labor_admin_logado") === "sim") {
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("painelCard").style.display = "block";
+    carregarDenuncias();
+  }
+});
+
 async function carregarDenuncias() {
   const area = document.getElementById("listaDenuncias");
   area.innerHTML = "Carregando denúncias...";
@@ -50,5 +80,3 @@ async function carregarDenuncias() {
     area.innerHTML = "<p>Erro ao carregar denúncias.</p>";
   }
 }
-
-carregarDenuncias();
