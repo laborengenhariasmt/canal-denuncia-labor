@@ -1,1 +1,184 @@
-<h1>Canal de Denúncias Labor</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canal de Denúncias Labor</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="hero">
+
+  <img
+    src="assets/logo-labor.png"
+    alt="Labor Engenharia"
+    class="logo"
+  >
+
+  <h1>Canal de Denúncias</h1>
+
+  <p class="subtitulo">
+    Ambiente seguro e confidencial para registro de denúncias,
+    relatos de assédio, riscos psicossociais, irregularidades,
+    descumprimento de normas de segurança e demais situações
+    que possam impactar a integridade das pessoas e da organização.
+  </p>
+
+</header>
+
+<main class="container">
+
+  <section class="card">
+
+    <h2>Registrar Ocorrência</h2>
+
+    <form id="denunciaForm">
+
+      <label>
+        Tipo da Ocorrência
+      </label>
+
+      <select id="tipo_denuncia" required>
+        <option value="">Selecione</option>
+        <option>Assédio Moral</option>
+        <option>Assédio Sexual</option>
+        <option>Discriminação</option>
+        <option>Violência ou Ameaça</option>
+        <option>Risco Psicossocial</option>
+        <option>Fraude</option>
+        <option>Conduta Antiética</option>
+        <option>Descumprimento de SST</option>
+        <option>Outro</option>
+      </select>
+
+      <label>
+        Prioridade
+      </label>
+
+      <select id="urgencia" required>
+        <option value="">Selecione</option>
+        <option>Baixa</option>
+        <option>Média</option>
+        <option>Alta</option>
+        <option>Crítica</option>
+      </select>
+
+      <label>
+        Local da Ocorrência
+      </label>
+
+      <input
+        type="text"
+        id="local_ocorrencia"
+      >
+
+      <label>
+        Setor
+      </label>
+
+      <input
+        type="text"
+        id="setor"
+      >
+
+      <label>
+        Data Aproximada
+      </label>
+
+      <input
+        type="date"
+        id="data_ocorrencia"
+      >
+
+      <h3>Identificação</h3>
+
+      <div class="radio-group">
+
+        <label>
+          <input
+            type="radio"
+            name="anonimo"
+            value="sim"
+            checked
+          >
+          Permanecer Anônimo
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="anonimo"
+            value="nao"
+          >
+          Desejo me Identificar
+        </label>
+
+      </div>
+
+      <div id="dadosIdentificacao">
+
+        <input
+          type="text"
+          id="nome"
+          placeholder="Nome"
+        >
+
+        <input
+          type="email"
+          id="email"
+          placeholder="E-mail"
+        >
+
+        <input
+          type="text"
+          id="telefone"
+          placeholder="Telefone"
+        >
+
+      </div>
+
+      <label>
+        Pessoas Envolvidas
+      </label>
+
+      <textarea
+        id="pessoas_envolvidas"
+        rows="3"
+      ></textarea>
+
+      <label>
+        Testemunhas
+      </label>
+
+      <textarea
+        id="testemunhas"
+        rows="3"
+      ></textarea>
+
+      <label>
+        Descrição Detalhada
+      </label>
+
+      <textarea
+        id="descricao"
+        rows="8"
+        required
+      ></textarea>
+
+      <button type="submit">
+        Registrar Denúncia
+      </button>
+
+    </form>
+
+  </section>
+
+</main>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
