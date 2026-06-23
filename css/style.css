@@ -1,1 +1,161 @@
+:root {
+  --laranja: #e95500;
+  --laranja-claro: #ffb62e;
+  --cinza: #555555;
+  --cinza-claro: #f5f5f5;
+  --texto: #222222;
+  --branco: #ffffff;
+}
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #fff7f0;
+  color: var(--texto);
+}
+
+.hero {
+  background: linear-gradient(135deg, #e95500, #ff8a1d);
+  color: white;
+  padding: 42px 22px;
+  text-align: center;
+}
+
+.logo {
+  max-width: 320px;
+  width: 80%;
+  background: white;
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 26px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 800;
+}
+
+.subtitulo {
+  max-width: 900px;
+  margin: 18px auto 0;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 980px;
+  margin: -30px auto 60px;
+  padding: 0 18px;
+}
+
+.card {
+  background: white;
+  border-radius: 22px;
+  padding: 34px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+}
+
+.card h2 {
+  color: var(--laranja);
+  margin-top: 0;
+  font-size: 28px;
+}
+
+.card h3 {
+  margin-top: 28px;
+  color: var(--cinza);
+}
+
+form {
+  display: grid;
+  gap: 14px;
+}
+
+label {
+  font-weight: 700;
+  color: #333;
+  margin-top: 8px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #cccccc;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 6px 0 10px;
+}
+
+.radio-group label {
+  font-weight: 500;
+}
+
+.radio-group input {
+  width: auto;
+  margin-right: 6px;
+}
+
+#dadosIdentificacao {
+  display: none;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+button {
+  margin-top: 24px;
+  background: var(--laranja);
+  color: white;
+  border: none;
+  padding: 16px 22px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #c74700;
+}
+
+.aviso {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff0e5;
+  color: #5f2500;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  #dadosIdentificacao {
+    grid-template-columns: 1fr;
+  }
+}
