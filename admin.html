@@ -16,13 +16,30 @@
 </header>
 
 <main class="container">
-  <section class="card">
+
+  <section class="card" id="loginCard">
+    <h2>Acesso Restrito</h2>
+
+    <label>Usuário</label>
+    <input type="text" id="usuario" placeholder="Digite o usuário">
+
+    <label>Senha</label>
+    <input type="password" id="senha" placeholder="Digite a senha">
+
+    <button onclick="fazerLogin()">Entrar</button>
+
+    <p id="erroLogin" style="color:red; margin-top:15px;"></p>
+  </section>
+
+  <section class="card" id="painelCard" style="display:none;">
     <h2>Denúncias Recebidas</h2>
 
     <button onclick="carregarDenuncias()">Atualizar Lista</button>
+    <button onclick="sair()" style="background:#555;">Sair</button>
 
     <div id="listaDenuncias" style="margin-top: 25px;"></div>
   </section>
+
 </main>
 
 <script src="js/admin.js"></script>
