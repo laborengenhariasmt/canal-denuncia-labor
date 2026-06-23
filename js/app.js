@@ -1,5 +1,5 @@
-const SUPABASE_URL = "COLE_AQUI_SUA_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "COLE_AQUI_SUA_ANON_PUBLIC_KEY";
+const SUPABASE_URL = "https://qlendzkfsfwxipgafyqd.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_fN070j6KwDecyffZ-QWW8A_ozmZLXvJ";
 
 function gerarProtocolo() {
   const ano = new Date().getFullYear();
