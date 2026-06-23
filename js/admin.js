@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://qlendzkfsfwxipgafyqd.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_fN070j6KwDecyffZ-QWW8A_ozmZLXvJY";
+const SUPABASE_ANON_KEY = "sb_publishable_fN070j6KwDecyffZ-QWW8A_ozmZLXvJ";
 
 async function carregarDenuncias() {
   const area = document.getElementById("listaDenuncias");
