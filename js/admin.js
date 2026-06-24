@@ -36,7 +36,8 @@ async function carregarDenuncias() {
     }
 
     const denuncias = await resposta.json();
-
+    montarResumo(denuncias);
+    
     if (denuncias.length === 0) {
       area.innerHTML = "<p>Nenhuma denúncia registrada até o momento.</p>";
       return;
@@ -92,4 +93,21 @@ async function atualizarStatus(id, status) {
   } else {
     alert("Erro ao atualizar status.");
   }
+}
+function montarResumo(denuncias) {
+  const total = denuncias.length;
+  const recebidas = denuncias.filter(d => d.status === "Recebida" || !d.status).length;
+  const emAnalise = denuncias.filter(d => d.status === "Em análise").length;
+  const emInvestigacao = denuncias.filter(d => d.status === "Em investigação").length;
+  const concluidas = denuncias.filter(d => d.status === "Concluída").length;
+  const arquivadas = denuncias.filter(d => d.status === "Arquivada").length;
+
+  document.getElementById("resumoDenuncias").innerHTML = `
+    <div class="resumo-card"><strong>${total}</strong><span>Total</span></div>
+    <div class="resumo-card"><strong>${recebidas}</strong><span>Recebidas</span></div>
+    <div class="resumo-card"><strong>${emAnalise}</strong><span>Em análise</span></div>
+    <div class="resumo-card"><strong>${emInvestigacao}</strong><span>Em investigação</span></div>
+    <div class="resumo-card"><strong>${concluidas}</strong><span>Concluídas</span></div>
+    <div class="resumo-card"><strong>${arquivadas}</strong><span>Arquivadas</span></div>
+  `;
 }
