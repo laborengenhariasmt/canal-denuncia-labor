@@ -159,3 +159,28 @@ button:hover {
     grid-template-columns: 1fr;
   }
 }
+
+.dashboard-resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 20px 0 25px;
+}
+
+.resumo-card {
+  background: #fff0e5;
+  border-left: 6px solid var(--laranja);
+  padding: 16px;
+  border-radius: 14px;
+}
+
+.resumo-card strong {
+  display: block;
+  font-size: 26px;
+  color: var(--laranja);
+}
+
+.resumo-card span {
+  font-size: 14px;
+  color: #333;
+}
