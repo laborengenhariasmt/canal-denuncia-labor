@@ -1,15 +1,16 @@
-const SUPABASE_URL = "https://qlendzkfsfwxipgafyqd.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_fN070j6KwDecyffZ-QWW8A_ozmZLXvJ";
-
-const USUARIO_ADMIN = "admin";
-const SENHA_ADMIN = "Labor@2026";
-
-function fazerLogin() {
+async function fazerLogin() {
   const usuario = document.getElementById("usuario").value.trim();
   const senha = document.getElementById("senha").value.trim();
 
-  if (usuario === USUARIO_ADMIN && senha === SENHA_ADMIN) {
-    localStorage.setItem("labor_admin_logado", "sim");
+  const resposta = await fetch("/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ usuario, senha })
+  });
+
+  if (resposta.ok) {
     document.getElementById("loginCard").style.display = "none";
     document.getElementById("painelCard").style.display = "block";
     carregarDenuncias();
@@ -19,30 +20,16 @@ function fazerLogin() {
 }
 
 function sair() {
-  localStorage.removeItem("labor_admin_logado");
-  location.reload();
+  document.getElementById("loginCard").style.display = "block";
+  document.getElementById("painelCard").style.display = "none";
 }
-
-window.addEventListener("load", () => {
-  if (localStorage.getItem("labor_admin_logado") === "sim") {
-    document.getElementById("loginCard").style.display = "none";
-    document.getElementById("painelCard").style.display = "block";
-    carregarDenuncias();
-  }
-});
 
 async function carregarDenuncias() {
   const area = document.getElementById("listaDenuncias");
   area.innerHTML = "Carregando denúncias...";
 
   try {
-    const resposta = await fetch(`${SUPABASE_URL}/rest/v1/denuncias?select=*&order=criado_em.desc`, {
-      method: "GET",
-      headers: {
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-      }
-    });
+    const resposta = await fetch("/api/denuncias");
 
     if (!resposta.ok) {
       throw new Error("Erro ao carregar denúncias.");
@@ -77,6 +64,6 @@ async function carregarDenuncias() {
 
   } catch (erro) {
     console.error(erro);
-    area.innerHTML = "<p>Erro ao carregar denúncias.</p>";
+    area.innerHTML = "<p>Erro ao carregar denúncias. Faça login novamente.</p>";
   }
 }
