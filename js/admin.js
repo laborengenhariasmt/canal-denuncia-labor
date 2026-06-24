@@ -49,7 +49,17 @@ async function carregarDenuncias() {
         <strong>Tipo:</strong> ${d.tipo_denuncia}<br>
         <strong>Urgência:</strong> ${d.urgencia}<br>
         <strong>Setor:</strong> ${d.setor || "Não informado"}<br>
-        <strong>Status:</strong> ${d.status || "Recebida"}<br><br>
+        <strong>Status:</strong> ${d.status || "Recebida"}<br>
+
+        <select onchange="atualizarStatus(${d.id}, this.value)">
+          <option ${d.status === "Recebida" ? "selected" : ""}>Recebida</option>
+          <option ${d.status === "Em análise" ? "selected" : ""}>Em análise</option>
+          <option ${d.status === "Em investigação" ? "selected" : ""}>Em investigação</option>
+          <option ${d.status === "Concluída" ? "selected" : ""}>Concluída</option>
+          <option ${d.status === "Arquivada" ? "selected" : ""}>Arquivada</option>
+        </select>
+        
+        <br><br>
 
         <strong>Descrição:</strong><br>
         ${d.descricao || "Não informada"}<br><br>
@@ -65,5 +75,21 @@ async function carregarDenuncias() {
   } catch (erro) {
     console.error(erro);
     area.innerHTML = "<p>Erro ao carregar denúncias. Faça login novamente.</p>";
+  }
+}
+async function atualizarStatus(id, status) {
+  const resposta = await fetch("/api/atualizar-status", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ id, status })
+  });
+
+  if (resposta.ok) {
+    alert("Status atualizado.");
+    carregarDenuncias();
+  } else {
+    alert("Erro ao atualizar status.");
   }
 }
