@@ -7,12 +7,24 @@ export default async function handler(req, res) {
   try {
 
     const dados = req.body;
-
+    if (!dados) {
+      return res.status(400).json({
+        erro: "Dados não enviados."
+      });
+    }
+    
+    const token = dados.turnstileToken;
+    
+    if (!token) {
+      return res.status(400).json({
+        erro: "Captcha não informado."
+      });
+    }
     // ===============================
     // 1 - VALIDAR TURNSTILE
     // ===============================
 
-    const token = dados.turnstileToken;
+    
     if (!token) {
       return res.status(400).json({
         erro: "Captcha não informado."
