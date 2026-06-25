@@ -31,9 +31,7 @@ async function carregarDenuncias() {
   try {
     const resposta = await fetch("/api/denuncias");
 
-    if (!resposta.ok) {
-      throw new Error("Erro ao carregar denúncias.");
-    }
+    if (!resposta.ok) throw new Error("Erro ao carregar denúncias.");
 
     const denuncias = await resposta.json();
     denunciasCarregadas = denuncias;
@@ -47,19 +45,16 @@ async function carregarDenuncias() {
   }
 }
 
-async function atualizarStatus(id, status) {
-  const resposta = await fetch("/api/atualizar-status", {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, status })
-  });
+function aplicarFiltroStatus() {
+  const status = document.getElementById("filtroStatus").value;
 
-  if (resposta.ok) {
-    alert("Status atualizado.");
-    carregarDenuncias();
-  } else {
-    alert("Erro ao atualizar status.");
+  if (status === "Todos") {
+    renderizarDenuncias(denunciasCarregadas);
+    return;
   }
+
+  const filtradas = denunciasCarregadas.filter(d => (d.status || "Recebida") === status);
+  renderizarDenuncias(filtradas);
 }
 
 function montarResumo(denuncias) {
@@ -80,16 +75,11 @@ function montarResumo(denuncias) {
   `;
 }
 
-function aplicarFiltroStatus() {
-  const status = document.getElementById("filtroStatus").value;
-
-  if (status === "Todos") {
-    renderizarDenuncias(denunciasCarregadas);
-    return;
-  }
-
-  const filtradas = denunciasCarregadas.filter(d => (d.status || "Recebida") === status);
-  renderizarDenuncias(filtradas);
+function prioridadeIcone(urgencia) {
+  if (urgencia === "Crítica") return "🔴";
+  if (urgencia === "Alta") return "🟠";
+  if (urgencia === "Média") return "🟡";
+  return "🟢";
 }
 
 function renderizarDenuncias(denuncias) {
@@ -100,33 +90,105 @@ function renderizarDenuncias(denuncias) {
     return;
   }
 
-  area.innerHTML = denuncias.map(d => `
-    <div class="aviso">
-      <strong>Protocolo:</strong> ${d.protocolo}<br>
-      <strong>Data:</strong> ${new Date(d.criado_em).toLocaleString("pt-BR")}<br>
-      <strong>Tipo:</strong> ${d.tipo_denuncia}<br>
-      <strong>Urgência:</strong> ${d.urgencia}<br>
-      <strong>Setor:</strong> ${d.setor || "Não informado"}<br>
-      <strong>Status:</strong> ${d.status || "Recebida"}<br>
-
-      <select onchange="atualizarStatus(${d.id}, this.value)">
-        <option ${!d.status || d.status === "Recebida" ? "selected" : ""}>Recebida</option>
-        <option ${d.status === "Em análise" ? "selected" : ""}>Em análise</option>
-        <option ${d.status === "Em investigação" ? "selected" : ""}>Em investigação</option>
-        <option ${d.status === "Concluída" ? "selected" : ""}>Concluída</option>
-        <option ${d.status === "Arquivada" ? "selected" : ""}>Arquivada</option>
-      </select>
-
-      <br><br>
-
-      <strong>Descrição:</strong><br>
-      ${d.descricao || "Não informada"}<br><br>
-
-      <strong>Pessoas envolvidas:</strong><br>
-      ${d.pessoas_envolvidas || "Não informado"}<br><br>
-
-      <strong>Testemunhas:</strong><br>
-      ${d.testemunhas || "Não informado"}
+  area.innerHTML = `
+    <div class="tabela-wrapper">
+      <table class="tabela-denuncias">
+        <thead>
+          <tr>
+            <th>Protocolo</th>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Urgência</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${denuncias.map(d => `
+            <tr>
+              <td>${d.protocolo}</td>
+              <td>${new Date(d.criado_em).toLocaleDateString("pt-BR")}</td>
+              <td>${d.tipo_denuncia}</td>
+              <td>${prioridadeIcone(d.urgencia)} ${d.urgencia}</td>
+              <td>${d.status || "Recebida"}</td>
+              <td>
+                <button class="btn-pequeno" onclick="abrirDetalhes(${d.id})">Abrir</button>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
     </div>
-  `).join("");
+  `;
+}
+
+function abrirDetalhes(id) {
+  const d = denunciasCarregadas.find(item => item.id === id);
+
+  if (!d) return;
+
+  document.getElementById("modalDetalhes").style.display = "flex";
+
+  document.getElementById("conteudoDetalhes").innerHTML = `
+    <h2>${d.protocolo}</h2>
+
+    <p><strong>Data:</strong> ${new Date(d.criado_em).toLocaleString("pt-BR")}</p>
+    <p><strong>Tipo:</strong> ${d.tipo_denuncia}</p>
+    <p><strong>Urgência:</strong> ${prioridadeIcone(d.urgencia)} ${d.urgencia}</p>
+    <p><strong>Setor:</strong> ${d.setor || "Não informado"}</p>
+    <p><strong>Local:</strong> ${d.local_ocorrencia || "Não informado"}</p>
+    <p><strong>Status atual:</strong> ${d.status || "Recebida"}</p>
+
+    <label>Alterar Status</label>
+    <select id="statusDetalhe">
+      <option ${!d.status || d.status === "Recebida" ? "selected" : ""}>Recebida</option>
+      <option ${d.status === "Em análise" ? "selected" : ""}>Em análise</option>
+      <option ${d.status === "Em investigação" ? "selected" : ""}>Em investigação</option>
+      <option ${d.status === "Concluída" ? "selected" : ""}>Concluída</option>
+      <option ${d.status === "Arquivada" ? "selected" : ""}>Arquivada</option>
+    </select>
+
+    <button onclick="salvarStatusDetalhe(${d.id})">Salvar Status</button>
+
+    <hr>
+
+    <h3>Descrição</h3>
+    <p>${d.descricao || "Não informada"}</p>
+
+    <h3>Pessoas Envolvidas</h3>
+    <p>${d.pessoas_envolvidas || "Não informado"}</p>
+
+    <h3>Testemunhas</h3>
+    <p>${d.testemunhas || "Não informado"}</p>
+
+    <h3>Identificação</h3>
+    <p><strong>Anônima:</strong> ${d.denuncia_anonima ? "Sim" : "Não"}</p>
+    <p><strong>Nome:</strong> ${d.nome_denunciante || "Não informado"}</p>
+    <p><strong>E-mail:</strong> ${d.email_denunciante || "Não informado"}</p>
+    <p><strong>Telefone:</strong> ${d.telefone_denunciante || "Não informado"}</p>
+  `;
+}
+
+function fecharDetalhes() {
+  document.getElementById("modalDetalhes").style.display = "none";
+}
+
+async function salvarStatusDetalhe(id) {
+  const status = document.getElementById("statusDetalhe").value;
+  await atualizarStatus(id, status);
+  fecharDetalhes();
+}
+
+async function atualizarStatus(id, status) {
+  const resposta = await fetch("/api/atualizar-status", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, status })
+  });
+
+  if (resposta.ok) {
+    carregarDenuncias();
+  } else {
+    alert("Erro ao atualizar status.");
+  }
 }
