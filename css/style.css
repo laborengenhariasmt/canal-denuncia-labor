@@ -184,3 +184,58 @@ button:hover {
   font-size: 14px;
   color: #333;
 }
+.tabela-wrapper {
+  overflow-x: auto;
+  margin-top: 25px;
+}
+
+.tabela-denuncias {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.tabela-denuncias th,
+.tabela-denuncias td {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.tabela-denuncias th {
+  background: #fff0e5;
+  color: #5f2500;
+}
+
+.btn-pequeno {
+  padding: 9px 16px;
+  font-size: 14px;
+  border-radius: 20px;
+  margin: 0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-conteudo {
+  background: white;
+  width: 100%;
+  max-width: 850px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.modal-fechar {
+  background: #555;
+  margin-bottom: 20px;
+}
