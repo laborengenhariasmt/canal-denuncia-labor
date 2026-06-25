@@ -1,3 +1,4 @@
+let denunciasCarregadas = [];
 async function fazerLogin() {
   const usuario = document.getElementById("usuario").value.trim();
   const senha = document.getElementById("senha").value.trim();
