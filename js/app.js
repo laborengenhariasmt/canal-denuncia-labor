@@ -39,16 +39,23 @@ document.getElementById("denunciaForm").addEventListener("submit", async functio
   };
 
   try {
-    const resposta = await fetch(`${SUPABASE_URL}/rest/v1/denuncias`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify(dados)
-    });
+    const turnstileToken = turnstile.getResponse();
+
+  if (!turnstileToken) {
+    alert("Confirme o captcha.");
+    return;
+  }
+  
+  const resposta = await fetch("/api/registrar-denuncia", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      ...dados,
+      turnstileToken
+    })
+  });
 
     if (!resposta.ok) {
       throw new Error("Erro ao registrar denúncia.");
