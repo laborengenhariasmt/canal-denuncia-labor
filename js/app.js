@@ -58,7 +58,8 @@ document.getElementById("denunciaForm").addEventListener("submit", async functio
   });
 
     if (!resposta.ok) {
-      throw new Error("Erro ao registrar denúncia.");
+      const erro = await resposta.json();
+      throw new Error(erro.erro || "Erro ao registrar denúncia.");
     }
 
     alert(`Denúncia registrada com sucesso.\n\nProtocolo: ${protocolo}\n\nGuarde este número.`);
@@ -66,7 +67,7 @@ document.getElementById("denunciaForm").addEventListener("submit", async functio
     document.getElementById("dadosIdentificacao").style.display = "none";
 
   } catch (erro) {
-    alert("Não foi possível registrar a denúncia. Verifique a conexão ou tente novamente.");
-    console.error(erro);
+  alert(erro.message);
+  console.error(erro);
   }
 });
