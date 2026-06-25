@@ -13,7 +13,12 @@ export default async function handler(req, res) {
     // ===============================
 
     const token = dados.turnstileToken;
-
+    if (!token) {
+      return res.status(400).json({
+        erro: "Captcha não informado."
+      });
+    }
+    
     const verificacao = await fetch(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
