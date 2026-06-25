@@ -37,6 +37,7 @@ async function carregarDenuncias() {
     }
 
     const denuncias = await resposta.json();
+    denunciasCarregadas = denuncias;
     montarResumo(denuncias);
     
     if (denuncias.length === 0) {
