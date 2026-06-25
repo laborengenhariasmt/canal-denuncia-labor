@@ -96,7 +96,12 @@ export default async function handler(req, res) {
     );
 
     if (!resposta.ok) {
-      throw new Error("Erro ao gravar denúncia.");
+
+        const erroSupabase = await resposta.text();
+    
+        console.error("Supabase:", erroSupabase);
+    
+        throw new Error("Erro ao gravar denúncia.");
     }
 
     return res.status(200).json({
