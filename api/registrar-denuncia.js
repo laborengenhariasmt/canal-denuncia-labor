@@ -47,7 +47,15 @@ export default async function handler(req, res) {
 
     const resultado = await verificacao.json();
 
-    if (!resultado.success) {
+    if (
+        !resultado.success ||
+        resultado.action === "failed" ||
+        resultado.hostname !== "canal-denuncia-labor.vercel.app"
+    ) {
+        return res.status(400).json({
+            erro: "Falha na validação do captcha."
+        });
+    }
       return res.status(400).json({
         erro: "Captcha inválido."
       });
