@@ -1,6 +1,3 @@
-const SUPABASE_URL = "https://qlendzkfsfwxipgafyqd.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_fN070j6KwDecyffZ-QWW8A_ozmZLXvJ";
-
 function gerarProtocolo() {
   const ano = new Date().getFullYear();
   const numero = Math.floor(100000 + Math.random() * 900000);
