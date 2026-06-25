@@ -40,12 +40,8 @@ async function carregarDenuncias() {
     denunciasCarregadas = denuncias;
     montarResumo(denuncias);
     
-    if (denuncias.length === 0) {
-      area.innerHTML = "<p>Nenhuma denúncia registrada até o momento.</p>";
-      return;
-    }
-
-    area.innerHTML = denuncias.map(d => `
+    renderizarDenuncias(denuncias);
+    return; `
       <div class="aviso">
         <strong>Protocolo:</strong> ${d.protocolo}<br>
         <strong>Data:</strong> ${new Date(d.criado_em).toLocaleString("pt-BR")}<br>
