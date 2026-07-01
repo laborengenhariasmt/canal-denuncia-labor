@@ -14,66 +14,64 @@ document.querySelectorAll('input[name="anonimo"]').forEach((radio) => {
 document.getElementById("denunciaForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const identificado = document.querySelector('input[name="anonimo"]:checked').value === "nao";
-  const protocolo = gerarProtocolo();
-
-  const dados = {
-    protocolo: protocolo,
-    tipo_denuncia: document.getElementById("tipo_denuncia").value,
-    urgencia: document.getElementById("urgencia").value,
-    local_ocorrencia: document.getElementById("local_ocorrencia").value,
-    setor: document.getElementById("setor").value,
-    data_ocorrencia: document.getElementById("data_ocorrencia").value || null,
-    denuncia_anonima: !identificado,
-    nome_denunciante: identificado ? document.getElementById("nome").value : null,
-    email_denunciante: identificado ? document.getElementById("email").value : null,
-    telefone_denunciante: identificado ? document.getElementById("telefone").value : null,
-    descricao: document.getElementById("descricao").value,
-    pessoas_envolvidas: document.getElementById("pessoas_envolvidas").value,
-    testemunhas: document.getElementById("testemunhas").value,
-    status: "Recebida",
-    gravidade: "A classificar"
-  };
+  const botao = document.querySelector('button[type="submit"]');
+  botao.disabled = true;
+  botao.innerText = "Enviando...";
 
   try {
+    const identificado = document.querySelector('input[name="anonimo"]:checked').value === "nao";
+    const protocolo = gerarProtocolo();
+
     const turnstileToken = turnstile.getResponse();
 
-  if (!turnstileToken) {
-    alert("Confirme o captcha.");
-    return;
-  }
-  
-  const resposta = await fetch("/api/registrar-denuncia", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      ...dados,
-      turnstileToken
-    })
-  });
+    if (!turnstileToken) {
+      alert("Confirme o captcha.");
+      botao.disabled = false;
+      botao.innerText = "Registrar Denúncia";
+      return;
+    }
+
+    const dados = {
+      protocolo: protocolo,
+      tipo_denuncia: document.getElementById("tipo_denuncia").value,
+      urgencia: document.getElementById("urgencia").value,
+      local_ocorrencia: document.getElementById("local_ocorrencia").value,
+      setor: document.getElementById("setor").value,
+      data_ocorrencia: document.getElementById("data_ocorrencia").value || null,
+      denuncia_anonima: !identificado,
+      nome_denunciante: identificado ? document.getElementById("nome").value : null,
+      email_denunciante: identificado ? document.getElementById("email").value : null,
+      telefone_denunciante: identificado ? document.getElementById("telefone").value : null,
+      descricao: document.getElementById("descricao").value,
+      pessoas_envolvidas: document.getElementById("pessoas_envolvidas").value,
+      testemunhas: document.getElementById("testemunhas").value,
+      turnstileToken: turnstileToken
+    };
+
+    const resposta = await fetch("/api/registrar-denuncia", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(dados)
+    });
 
     if (!resposta.ok) {
-      let mensagem = "Erro ao registrar denúncia.";
-    
-      try {
-        const erro = await resposta.json();
-        mensagem = erro.erro || mensagem;
-      } catch {
-        const textoErro = await resposta.text();
-        mensagem = textoErro || mensagem;
-      }
-    
-      throw new Error(mensagem);
+      const textoErro = await resposta.text();
+      throw new Error(textoErro || "Erro ao registrar denúncia.");
     }
 
     alert(`Denúncia registrada com sucesso.\n\nProtocolo: ${protocolo}\n\nGuarde este número.`);
+
     document.getElementById("denunciaForm").reset();
     document.getElementById("dadosIdentificacao").style.display = "none";
+    turnstile.reset();
 
   } catch (erro) {
-  alert(erro.message);
-  console.error(erro);
+    alert("Não foi possível registrar a denúncia. Erro: " + erro.message);
+    console.error(erro);
   }
+
+  botao.disabled = false;
+  botao.innerText = "Registrar Denúncia";
 });
