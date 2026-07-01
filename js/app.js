@@ -55,8 +55,17 @@ document.getElementById("denunciaForm").addEventListener("submit", async functio
   });
 
     if (!resposta.ok) {
-      const erro = await resposta.json();
-      throw new Error(erro.erro || "Erro ao registrar denúncia.");
+      let mensagem = "Erro ao registrar denúncia.";
+    
+      try {
+        const erro = await resposta.json();
+        mensagem = erro.erro || mensagem;
+      } catch {
+        const textoErro = await resposta.text();
+        mensagem = textoErro || mensagem;
+      }
+    
+      throw new Error(mensagem);
     }
 
     alert(`Denúncia registrada com sucesso.\n\nProtocolo: ${protocolo}\n\nGuarde este número.`);
