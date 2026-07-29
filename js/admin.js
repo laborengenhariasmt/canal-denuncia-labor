@@ -166,6 +166,25 @@ function abrirDetalhes(id) {
     <p><strong>Nome:</strong> ${d.nome_denunciante || "Não informado"}</p>
     <p><strong>E-mail:</strong> ${d.email_denunciante || "Não informado"}</p>
     <p><strong>Telefone:</strong> ${d.telefone_denunciante || "Não informado"}</p>
+    
+    <hr>
+    
+    <h3>Ação tomada — registro interno</h3>
+    
+    <p>
+      Este campo é exclusivo do painel administrativo e não será mostrado
+      na consulta pública do protocolo.
+    </p>
+    
+    <textarea
+      id="acaoTomada"
+      rows="7"
+      placeholder="Descreva as providências, contatos realizados, verificações, medidas corretivas e demais ações tomadas."
+    >${d.acao_tomada || ""}</textarea>
+    
+    <button onclick="salvarAcao(${d.id})">
+      Salvar ação tomada
+    </button>
   `;
 }
 
