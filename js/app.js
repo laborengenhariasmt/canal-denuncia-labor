@@ -1,159 +1,276 @@
+let empresaAtual = null;
+
+function obterEmpresaCodigo() {
+  const parametros = new URLSearchParams(window.location.search);
+
+  return String(parametros.get("empresa") || "")
+    .trim()
+    .toLowerCase();
+}
+
 function gerarProtocolo() {
   const ano = new Date().getFullYear();
   const numero = Math.floor(100000 + Math.random() * 900000);
-  return `LABOR-${ano}-${numero}`;
+
+  const prefixo = String(empresaAtual?.codigo || "CANAL")
+    .replace(/[^a-z0-9]/gi, "")
+    .toUpperCase()
+    .slice(0, 10);
+
+  return `${prefixo}-${ano}-${numero}`;
 }
 
-function obterEmpresaCodigo() {
+function mostrarPagina(id) {
+  const paginas = [
+    "paginaCarregando",
+    "paginaNeutra",
+    "paginaErro",
+    "paginaCanal"
+  ];
 
-  const caminho = window.location.pathname
-    .replace(/^\/+/, "")
-    .replace(/\/+$/, "");
+  paginas.forEach((paginaId) => {
+    const elemento = document.getElementById(paginaId);
 
-  if (!caminho) {
-    return null;
+    if (elemento) {
+      elemento.style.display = paginaId === id ? "block" : "none";
+    }
+  });
+}
+
+function aplicarTemaEmpresa(empresa) {
+  document.title =
+    `${empresa.nome_canal} | ${empresa.nome_curto}`;
+
+  document.documentElement.style.setProperty(
+    "--empresa-cor-principal",
+    empresa.cor_principal
+  );
+
+  document.documentElement.style.setProperty(
+    "--empresa-cor-secundaria",
+    empresa.cor_secundaria
+  );
+
+  const cabecalho = document.getElementById("cabecalhoEmpresa");
+
+  if (cabecalho) {
+    cabecalho.style.background =
+      `linear-gradient(135deg, ${empresa.cor_principal}, ${empresa.cor_secundaria})`;
   }
 
-  return caminho.split("/")[0].toLowerCase();
+  document.querySelectorAll("button").forEach((botao) => {
+    botao.style.backgroundColor = empresa.cor_secundaria;
+  });
+
+  const nomeCanal = document.getElementById("nomeCanal");
+  const mensagemInicial = document.getElementById("mensagemInicial");
+  const logoEmpresa = document.getElementById("logoEmpresa");
+  const linkConsulta = document.getElementById("linkConsulta");
+
+  nomeCanal.textContent = empresa.nome_canal;
+  mensagemInicial.textContent = empresa.mensagem_inicial;
+
+  if (empresa.logo_url) {
+    logoEmpresa.src = empresa.logo_url;
+    logoEmpresa.alt = empresa.nome;
+    logoEmpresa.style.display = "block";
+  } else {
+    logoEmpresa.style.display = "none";
+  }
+
+  linkConsulta.href =
+    `/consulta.html?empresa=${encodeURIComponent(empresa.codigo)}`;
+
+  if (!empresa.permite_anonima) {
+    const anonimoSim = document.querySelector(
+      'input[name="anonimo"][value="sim"]'
+    );
+
+    const anonimoNao = document.querySelector(
+      'input[name="anonimo"][value="nao"]'
+    );
+
+    const blocoIdentificacao =
+      document.getElementById("blocoIdentificacao");
+
+    if (anonimoSim) {
+      anonimoSim.checked = false;
+      anonimoSim.disabled = true;
+    }
+
+    if (anonimoNao) {
+      anonimoNao.checked = true;
+    }
+
+    if (blocoIdentificacao) {
+      blocoIdentificacao.style.display = "none";
+    }
+
+    document.getElementById("dadosIdentificacao").style.display = "grid";
+  }
 }
 
-document.querySelectorAll('input[name="anonimo"]').forEach((radio) => {
-  radio.addEventListener("change", () => {
-    const identificado =
-      document.querySelector('input[name="anonimo"]:checked').value === "nao";
+async function carregarEmpresa() {
+  const codigo = obterEmpresaCodigo();
 
-    document.getElementById("dadosIdentificacao").style.display =
-      identificado ? "grid" : "none";
-  });
-});
-
-document.getElementById("denunciaForm").addEventListener("submit", async function (e) {
-
-  e.preventDefault();
-
-  const empresaCodigo = obterEmpresaCodigo();
-
-  if (!empresaCodigo) {
-    alert("Canal inválido.");
+  if (!codigo) {
+    mostrarPagina("paginaNeutra");
     return;
   }
 
-  const botao = document.querySelector('button[type="submit"]');
-
-  botao.disabled = true;
-  botao.innerText = "Enviando...";
-
   try {
+    const resposta = await fetch(
+      `/api/empresa-publica?codigo=${encodeURIComponent(codigo)}`
+    );
 
-    const identificado =
-      document.querySelector('input[name="anonimo"]:checked').value === "nao";
+    const dados = await resposta.json();
 
-    const protocolo = gerarProtocolo();
+    if (!resposta.ok) {
+      throw new Error(
+        dados.erro || "Empresa não encontrada ou canal desativado."
+      );
+    }
 
-    const turnstileToken = turnstile.getResponse();
+    empresaAtual = dados;
 
-    if (!turnstileToken) {
+    aplicarTemaEmpresa(empresaAtual);
+    mostrarPagina("paginaCanal");
 
-      alert("Confirme o captcha.");
+  } catch (erro) {
+    console.error(erro);
 
-      botao.disabled = false;
-      botao.innerText = "Registrar Denúncia";
+    document.getElementById("mensagemErroEmpresa").textContent =
+      erro.message;
 
+    mostrarPagina("paginaErro");
+  }
+}
+
+document
+  .querySelectorAll('input[name="anonimo"]')
+  .forEach((radio) => {
+    radio.addEventListener("change", () => {
+      const selecionado = document.querySelector(
+        'input[name="anonimo"]:checked'
+      );
+
+      const identificado =
+        selecionado && selecionado.value === "nao";
+
+      document.getElementById("dadosIdentificacao").style.display =
+        identificado ? "grid" : "none";
+    });
+  });
+
+document
+  .getElementById("denunciaForm")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    if (!empresaAtual) {
+      alert("Empresa não identificada.");
       return;
     }
 
-    const dados = {
+    const botao = document.querySelector(
+      '#denunciaForm button[type="submit"]'
+    );
 
-      empresa_codigo: empresaCodigo,
+    botao.disabled = true;
+    botao.innerText = "Enviando...";
 
-      protocolo: protocolo,
+    try {
+      const opcaoIdentificacao = document.querySelector(
+        'input[name="anonimo"]:checked'
+      );
 
-      tipo_denuncia:
-        document.getElementById("tipo_denuncia").value,
+      const identificado =
+        opcaoIdentificacao &&
+        opcaoIdentificacao.value === "nao";
 
-      urgencia:
-        document.getElementById("urgencia").value,
+      const protocolo = gerarProtocolo();
+      const turnstileToken = turnstile.getResponse();
 
-      local_ocorrencia:
-        document.getElementById("local_ocorrencia").value,
+      if (!turnstileToken) {
+        alert("Confirme o captcha.");
+        return;
+      }
 
-      setor:
-        document.getElementById("setor").value,
+      const dados = {
+        empresa_codigo: empresaAtual.codigo,
+        protocolo,
+        tipo_denuncia:
+          document.getElementById("tipo_denuncia").value,
+        urgencia:
+          document.getElementById("urgencia").value,
+        local_ocorrencia:
+          document.getElementById("local_ocorrencia").value,
+        setor:
+          document.getElementById("setor").value,
+        data_ocorrencia:
+          document.getElementById("data_ocorrencia").value || null,
+        denuncia_anonima:
+          empresaAtual.permite_anonima ? !identificado : false,
+        nome_denunciante:
+          identificado
+            ? document.getElementById("nome").value
+            : null,
+        email_denunciante:
+          identificado
+            ? document.getElementById("email").value
+            : null,
+        telefone_denunciante:
+          identificado
+            ? document.getElementById("telefone").value
+            : null,
+        descricao:
+          document.getElementById("descricao").value,
+        pessoas_envolvidas:
+          document.getElementById("pessoas_envolvidas").value,
+        testemunhas:
+          document.getElementById("testemunhas").value,
+        turnstileToken
+      };
 
-      data_ocorrencia:
-        document.getElementById("data_ocorrencia").value || null,
+      const resposta = await fetch("/api/registrar-denuncia", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dados)
+      });
 
-      denuncia_anonima:
-        !identificado,
+      const resultado = await resposta.json();
 
-      nome_denunciante:
-        identificado
-          ? document.getElementById("nome").value
-          : null,
+      if (!resposta.ok) {
+        throw new Error(
+          resultado.erro || "Erro ao registrar denúncia."
+        );
+      }
 
-      email_denunciante:
-        identificado
-          ? document.getElementById("email").value
-          : null,
+      alert(
+        `Denúncia registrada com sucesso.\n\n` +
+        `Protocolo: ${resultado.protocolo || protocolo}\n\n` +
+        `Guarde este número.`
+      );
 
-      telefone_denunciante:
-        identificado
-          ? document.getElementById("telefone").value
-          : null,
+      document.getElementById("denunciaForm").reset();
+      document.getElementById("dadosIdentificacao").style.display = "none";
 
-      descricao:
-        document.getElementById("descricao").value,
+      turnstile.reset();
 
-      pessoas_envolvidas:
-        document.getElementById("pessoas_envolvidas").value,
+    } catch (erro) {
+      alert(
+        "Não foi possível registrar a denúncia.\n\n" +
+        erro.message
+      );
 
-      testemunhas:
-        document.getElementById("testemunhas").value,
+      console.error(erro);
 
-      turnstileToken
-    };
-
-    const resposta = await fetch("/api/registrar-denuncia", {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify(dados)
-
-    });
-
-    const resultado = await resposta.json();
-
-    if (!resposta.ok) {
-      throw new Error(resultado.erro || "Erro ao registrar denúncia.");
+    } finally {
+      botao.disabled = false;
+      botao.innerText = "Registrar Denúncia";
     }
+  });
 
-    alert(
-      `Denúncia registrada com sucesso.\n\nProtocolo: ${protocolo}\n\nGuarde este número.`
-    );
-
-    document.getElementById("denunciaForm").reset();
-
-    document.getElementById("dadosIdentificacao").style.display = "none";
-
-    turnstile.reset();
-
-  } catch (erro) {
-
-    alert(
-      "Não foi possível registrar a denúncia.\n\n" + erro.message
-    );
-
-    console.error(erro);
-
-  } finally {
-
-    botao.disabled = false;
-    botao.innerText = "Registrar Denúncia";
-
-  }
-
-});
+carregarEmpresa();
