@@ -71,7 +71,17 @@
 
 </main>
 
-<script src="js/consulta.js"></script>
+<script>
+  const empresaCodigo = window.location.pathname
+    .replace(/^\/+/, "")
+    .replace(/\/+$/, "")
+    .split("/")[0];
+
+  document.getElementById("linkVoltarCanal").href =
+    `/${empresaCodigo}`;
+</script>
+
+<script src="/js/consulta.js"></script>
 
 </body>
 </html>
