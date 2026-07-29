@@ -211,3 +211,54 @@ async function atualizarStatus(id, status) {
     alert("Erro ao atualizar status.");
   }
 }
+async function salvarAcao(id) {
+  const campo = document.getElementById("acaoTomada");
+  const botao = event.currentTarget;
+
+  if (!campo) {
+    alert("Campo de ação tomada não encontrado.");
+    return;
+  }
+
+  const acaoTomada = campo.value.trim();
+
+  botao.disabled = true;
+  botao.innerText = "Salvando...";
+
+  try {
+    const resposta = await fetch("/api/salvar-acao", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id,
+        acao_tomada: acaoTomada
+      })
+    });
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(resultado.erro || "Erro ao salvar ação tomada.");
+    }
+
+    alert("Ação tomada salva com sucesso.");
+
+    await carregarDenuncias();
+
+    const denunciaAtualizada = denunciasCarregadas.find(
+      item => Number(item.id) === Number(id)
+    );
+
+    if (denunciaAtualizada) {
+      abrirDetalhes(id);
+    }
+  } catch (erro) {
+    alert("Não foi possível salvar: " + erro.message);
+    console.error(erro);
+  } finally {
+    botao.disabled = false;
+    botao.innerText = "Salvar ação tomada";
+  }
+}
