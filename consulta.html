@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Consultar Protocolo | Labor</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="hero">
+  <img
+    src="assets/logo-labor.png"
+    alt="Labor Engenharia"
+    class="logo"
+  >
+
+  <h1>Consultar Protocolo</h1>
+
+  <p class="subtitulo">
+    Consulte o andamento do relato utilizando o número de protocolo
+    recebido no momento do registro.
+  </p>
+</header>
+
+<main class="container">
+
+  <section class="card">
+
+    <h2>Acompanhar ocorrência</h2>
+
+    <form id="consultaForm">
+
+      <label for="protocoloConsulta">
+        Número do protocolo
+      </label>
+
+      <input
+        type="text"
+        id="protocoloConsulta"
+        placeholder="Ex.: LABOR-2026-123456"
+        autocomplete="off"
+        required
+      >
+
+      <button type="submit" id="botaoConsultar">
+        Consultar protocolo
+      </button>
+
+    </form>
+
+    <div
+      id="resultadoConsulta"
+      style="margin-top: 25px;"
+    ></div>
+
+    <p style="margin-top: 30px;">
+      <a href="/">
+        Voltar ao Canal de Denúncias
+      </a>
+    </p>
+
+  </section>
+
+</main>
+
+<script src="js/consulta.js"></script>
+
+</body>
+</html>
