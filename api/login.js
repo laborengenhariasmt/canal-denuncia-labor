@@ -1,3 +1,8 @@
+import {
+  criarCookieSessao,
+  criarSessao
+} from "../lib/session.js";
+
 function normalizarTexto(valor) {
   return String(valor || "").trim();
 }
@@ -10,21 +15,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    if (!process.env.SUPABASE_URL) {
+    if (
+      !process.env.SUPABASE_URL ||
+      !process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      !process.env.SESSION_TOKEN
+    ) {
       return res.status(500).json({
-        erro: "SUPABASE_URL não configurada."
-      });
-    }
-
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      return res.status(500).json({
-        erro: "SUPABASE_SERVICE_ROLE_KEY não configurada."
-      });
-    }
-
-    if (!process.env.SESSION_TOKEN) {
-      return res.status(500).json({
-        erro: "SESSION_TOKEN não configurado."
+        erro: "Configuração interna incompleta."
       });
     }
 
@@ -37,12 +34,6 @@ export default async function handler(req, res) {
       });
     }
 
-    if (usuario.length > 100 || senha.length > 200) {
-      return res.status(400).json({
-        erro: "Dados de acesso inválidos."
-      });
-    }
-
     const respostaSupabase = await fetch(
       `${process.env.SUPABASE_URL}/rest/v1/rpc/autenticar_usuario`,
       {
@@ -50,7 +41,8 @@ export default async function handler(req, res) {
         headers: {
           "Content-Type": "application/json",
           apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
+          Authorization:
+            `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
         },
         body: JSON.stringify({
           p_usuario: usuario,
@@ -62,7 +54,7 @@ export default async function handler(req, res) {
     const dados = await respostaSupabase.json();
 
     if (!respostaSupabase.ok) {
-      console.error("Erro ao autenticar no Supabase:", dados);
+      console.error("Erro Supabase no login:", dados);
 
       return res.status(500).json({
         erro: "Não foi possível realizar o login."
@@ -70,7 +62,7 @@ export default async function handler(req, res) {
     }
 
     const usuarioAutenticado =
-      Array.isArray(dados) && dados.length > 0
+      Array.isArray(dados) && dados.length
         ? dados[0]
         : null;
 
@@ -80,16 +72,11 @@ export default async function handler(req, res) {
       });
     }
 
+    const tokenSessao = criarSessao(usuarioAutenticado);
+
     res.setHeader(
       "Set-Cookie",
-      [
-        `labor_session=${encodeURIComponent(process.env.SESSION_TOKEN)}`,
-        "Path=/",
-        "HttpOnly",
-        "Secure",
-        "SameSite=Strict",
-        "Max-Age=28800"
-      ].join("; ")
+      criarCookieSessao(tokenSessao)
     );
 
     return res.status(200).json({
@@ -101,9 +88,11 @@ export default async function handler(req, res) {
         perfil: usuarioAutenticado.perfil,
         empresa_id: usuarioAutenticado.empresa_id,
         empresa_nome:
-          usuarioAutenticado.empresa_nome || "Labor Engenharia",
+          usuarioAutenticado.empresa_nome ||
+          "Labor Engenharia",
         empresa_codigo:
-          usuarioAutenticado.empresa_codigo || "labor"
+          usuarioAutenticado.empresa_codigo ||
+          "labor"
       }
     });
 
