@@ -1,22 +1,49 @@
-export default async function handler(req, res) {
-  const cookie = req.headers.cookie || "";
+import {
+  lerSessao
+} from "../lib/session.js";
 
-  if (!cookie.includes(`labor_session=${process.env.SESSION_TOKEN}`)) {
-    return res.status(401).json({ erro: "Não autorizado" });
+export default async function handler(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({
+      erro: "Método não permitido."
+    });
   }
 
-  if (req.method !== "GET") {
-    return res.status(405).json({ erro: "Método não permitido" });
+  const sessao = lerSessao(req);
+
+  if (!sessao) {
+    return res.status(401).json({
+      erro: "Não autorizado."
+    });
   }
 
   try {
+    const parametros = new URLSearchParams();
+
+    parametros.set("select", "*");
+    parametros.set("order", "criado_em.desc");
+
+    if (sessao.perfil !== "super_admin") {
+      if (!sessao.empresa_id) {
+        return res.status(403).json({
+          erro: "Usuário sem empresa vinculada."
+        });
+      }
+
+      parametros.set(
+        "empresa_id",
+        `eq.${sessao.empresa_id}`
+      );
+    }
+
     const resposta = await fetch(
-      `${process.env.SUPABASE_URL}/rest/v1/denuncias?select=*&order=criado_em.desc`,
+      `${process.env.SUPABASE_URL}/rest/v1/denuncias?${parametros.toString()}`,
       {
         method: "GET",
         headers: {
           apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
+          Authorization:
+            `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
         }
       }
     );
@@ -24,12 +51,19 @@ export default async function handler(req, res) {
     const dados = await resposta.json();
 
     if (!resposta.ok) {
-      return res.status(resposta.status).json(dados);
+      return res.status(resposta.status).json({
+        erro: "Erro ao consultar denúncias.",
+        detalhe: dados
+      });
     }
 
     return res.status(200).json(dados);
 
   } catch (erro) {
-    return res.status(500).json({ erro: "Erro interno ao consultar denúncias" });
+    console.error("Erro ao consultar denúncias:", erro);
+
+    return res.status(500).json({
+      erro: "Erro interno ao consultar denúncias."
+    });
   }
 }
