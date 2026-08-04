@@ -1,3 +1,5 @@
+let empresaAtual = null;
+
 function obterEmpresaCodigo() {
   const parametros = new URLSearchParams(
     window.location.search
@@ -8,12 +10,131 @@ function obterEmpresaCodigo() {
     .toLowerCase();
 }
 
+function mostrarPagina(id) {
+  const paginas = [
+    "paginaCarregando",
+    "paginaErro",
+    "paginaConsulta"
+  ];
+
+  paginas.forEach((paginaId) => {
+    const elemento = document.getElementById(paginaId);
+
+    if (elemento) {
+      elemento.style.display =
+        paginaId === id ? "block" : "none";
+    }
+  });
+}
+
+function escaparHtml(valor) {
+  return String(valor ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function aplicarTemaEmpresa(empresa) {
+  document.title =
+    `Consultar Protocolo | ${empresa.nome_curto}`;
+
+  const cabecalho =
+    document.getElementById("cabecalhoEmpresa");
+
+  if (cabecalho) {
+    cabecalho.style.background =
+      `linear-gradient(135deg, ${empresa.cor_principal}, ${empresa.cor_secundaria})`;
+  }
+
+  const titulo =
+    document.getElementById("tituloConsulta");
+
+  const subtitulo =
+    document.getElementById("subtituloConsulta");
+
+  const logo =
+    document.getElementById("logoEmpresa");
+
+  const botao =
+    document.getElementById("botaoConsultar");
+
+  const linkVoltar =
+    document.getElementById("linkVoltarCanal");
+
+  titulo.textContent =
+    `Consultar Protocolo — ${empresa.nome_curto}`;
+
+  subtitulo.textContent =
+    `Consulte o andamento do relato registrado no canal da ${empresa.nome_curto}.`;
+
+  botao.style.backgroundColor =
+    empresa.cor_secundaria;
+
+  linkVoltar.href =
+    `/?empresa=${encodeURIComponent(empresa.codigo)}`;
+
+  if (empresa.logo_url) {
+    logo.src = empresa.logo_url;
+    logo.alt = empresa.nome;
+    logo.style.display = "block";
+  } else {
+    logo.style.display = "none";
+  }
+}
+
+async function carregarEmpresa() {
+  const codigo = obterEmpresaCodigo();
+
+  if (!codigo) {
+    document.getElementById(
+      "mensagemErroEmpresa"
+    ).textContent =
+      "Empresa não identificada no endereço.";
+
+    mostrarPagina("paginaErro");
+    return;
+  }
+
+  try {
+    const resposta = await fetch(
+      `/api/empresa-publica?codigo=${encodeURIComponent(codigo)}`
+    );
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(
+        dados.erro ||
+        "Empresa não encontrada ou canal desativado."
+      );
+    }
+
+    empresaAtual = dados;
+
+    aplicarTemaEmpresa(empresaAtual);
+    mostrarPagina("paginaConsulta");
+
+  } catch (erro) {
+    console.error(erro);
+
+    document.getElementById(
+      "mensagemErroEmpresa"
+    ).textContent = erro.message;
+
+    mostrarPagina("paginaErro");
+  }
+}
+
 document
   .getElementById("consultaForm")
   .addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const empresaCodigo = obterEmpresaCodigo();
+    if (!empresaAtual) {
+      return;
+    }
 
     const protocolo = document
       .getElementById("protocoloConsulta")
@@ -28,18 +149,13 @@ document
       document.getElementById("botaoConsultar");
 
     resultado.innerHTML = "";
+
     botao.disabled = true;
     botao.innerText = "Consultando...";
 
     try {
-      if (!empresaCodigo) {
-        throw new Error(
-          "Empresa não identificada no endereço."
-        );
-      }
-
       const parametros = new URLSearchParams({
-        empresa: empresaCodigo,
+        empresa: empresaAtual.codigo,
         protocolo
       });
 
@@ -68,40 +184,47 @@ document
 
       resultado.innerHTML = `
         <div class="aviso">
+
           <h3>Protocolo localizado</h3>
 
           <p>
             <strong>Protocolo:</strong>
-            ${dados.protocolo}
+            ${escaparHtml(dados.protocolo)}
           </p>
 
           <p>
             <strong>Status atual:</strong>
-            ${dados.status}
+            ${escaparHtml(dados.status)}
           </p>
 
           <p>
             <strong>Registrado em:</strong>
-            ${dataRegistro}
+            ${escaparHtml(dataRegistro)}
           </p>
 
           <p>
             <strong>Última atualização:</strong>
-            ${dataAtualizacao}
+            ${escaparHtml(dataAtualizacao)}
           </p>
 
           <p>
             Para preservar a confidencialidade, esta consulta
             mostra somente o andamento do relato.
           </p>
+
         </div>
       `;
 
     } catch (erro) {
       resultado.innerHTML = `
         <div class="aviso">
+
           <strong>Não foi possível consultar.</strong>
-          <p>${erro.message}</p>
+
+          <p>
+            ${escaparHtml(erro.message)}
+          </p>
+
         </div>
       `;
 
@@ -110,3 +233,5 @@ document
       botao.innerText = "Consultar protocolo";
     }
   });
+
+carregarEmpresa();
