@@ -8,78 +8,130 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Consultar Protocolo | Labor</title>
+  <title>Consultar Protocolo</title>
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    #paginaConsulta,
+    #paginaCarregando,
+    #paginaErro {
+      display: none;
+    }
+
+    #paginaCarregando {
+      display: block;
+    }
+
+    .logo-empresa {
+      display: none;
+      max-width: 280px;
+      max-height: 150px;
+      object-fit: contain;
+      margin: 0 auto 24px;
+    }
+  </style>
 </head>
 
 <body>
 
-<header class="hero">
-  <img
-    src="assets/logo-labor.png"
-    alt="Labor Engenharia"
-    class="logo"
-  >
+<div id="paginaCarregando">
 
-  <h1>Consultar Protocolo</h1>
+  <main class="container">
+    <section class="card">
+      <h2>Carregando canal...</h2>
+    </section>
+  </main>
 
-  <p class="subtitulo">
-    Consulte o andamento do relato utilizando o número de protocolo
-    recebido no momento do registro.
-  </p>
-</header>
+</div>
 
-<main class="container">
+<div id="paginaErro">
 
-  <section class="card">
+  <header class="hero">
+    <h1>Canal indisponível</h1>
+  </header>
 
-    <h2>Acompanhar ocorrência</h2>
+  <main class="container">
+    <section class="card">
 
-    <form id="consultaForm">
+      <h2>Não foi possível abrir esta consulta</h2>
 
-      <label for="protocoloConsulta">
-        Número do protocolo
-      </label>
+      <p id="mensagemErroEmpresa">
+        Empresa não encontrada ou canal desativado.
+      </p>
 
-      <input
-        type="text"
-        id="protocoloConsulta"
-        placeholder="Ex.: LABOR-2026-123456"
-        autocomplete="off"
-        required
-      >
+    </section>
+  </main>
 
-      <button type="submit" id="botaoConsultar">
-        Consultar protocolo
-      </button>
+</div>
 
-    </form>
+<div id="paginaConsulta">
 
-    <div
-      id="resultadoConsulta"
-      style="margin-top: 25px;"
-    ></div>
+  <header class="hero" id="cabecalhoEmpresa">
 
-    <p style="margin-top: 30px;">
-      <a id="linkVoltarCanal" href="#">
-        Voltar ao Canal de Denúncias
-      </a>
+    <img
+      id="logoEmpresa"
+      class="logo logo-empresa"
+      alt="Logomarca da empresa"
+    >
+
+    <h1 id="tituloConsulta">
+      Consultar Protocolo
+    </h1>
+
+    <p class="subtitulo" id="subtituloConsulta">
+      Consulte o andamento do relato utilizando o número de protocolo.
     </p>
 
-  </section>
+  </header>
 
-</main>
+  <main class="container">
 
-<script>
-  const empresaCodigo = window.location.pathname
-    .replace(/^\/+/, "")
-    .replace(/\/+$/, "")
-    .split("/")[0];
+    <section class="card">
 
-  document.getElementById("linkVoltarCanal").href =
-    `/${empresaCodigo}`;
-</script>
+      <h2>Acompanhar ocorrência</h2>
+
+      <form id="consultaForm">
+
+        <label for="protocoloConsulta">
+          Número do protocolo
+        </label>
+
+        <input
+          type="text"
+          id="protocoloConsulta"
+          placeholder="Digite o protocolo recebido"
+          autocomplete="off"
+          required
+        >
+
+        <button
+          type="submit"
+          id="botaoConsultar"
+        >
+          Consultar protocolo
+        </button>
+
+      </form>
+
+      <div
+        id="resultadoConsulta"
+        style="margin-top: 25px;"
+      ></div>
+
+      <p style="margin-top: 30px;">
+
+        <a id="linkVoltarCanal" href="#">
+          Voltar ao Canal de Denúncias
+        </a>
+
+      </p>
+
+    </section>
+
+  </main>
+
+</div>
 
 <script src="/js/consulta.js"></script>
 
