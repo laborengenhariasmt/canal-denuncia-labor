@@ -1,3 +1,7 @@
+import {
+  criarCookieLogout
+} from "../lib/session.js";
+
 export default function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -7,14 +11,7 @@ export default function handler(req, res) {
 
   res.setHeader(
     "Set-Cookie",
-    [
-      "labor_session=",
-      "Path=/",
-      "HttpOnly",
-      "Secure",
-      "SameSite=Strict",
-      "Max-Age=0"
-    ].join("; ")
+    criarCookieLogout()
   );
 
   return res.status(200).json({
