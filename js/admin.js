@@ -219,8 +219,15 @@ function abrirTela(nomeTela, botao) {
   ) {
     carregarEmpresas();
   }
+  if (
+    nomeTela === "usuarios" &&
+    usuarioLogado?.perfil === "super_admin"
+  ) {
+    carregarUsuarios();
+  }
 }
 
+  
 function abrirTelaPorNome(nomeTela) {
   const botao = document.querySelector(
     `.admin-menu-item[data-tela="${nomeTela}"]`
