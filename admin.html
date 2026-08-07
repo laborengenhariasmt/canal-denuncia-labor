@@ -807,6 +807,134 @@
   </div>
 </div>
 
+<!-- MODAL USUÁRIO -->
+<div
+  id="modalUsuario"
+  class="modal"
+>
+  <div class="modal-conteudo">
+
+    <div class="admin-modal-topo">
+
+      <div>
+        <h2 id="tituloModalUsuario">
+          Novo Usuário
+        </h2>
+
+        <p>
+          Configure o acesso ao painel administrativo.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="modal-fechar"
+        onclick="fecharModalUsuario()"
+      >
+        Fechar
+      </button>
+
+    </div>
+
+    <form id="formUsuario">
+
+      <input
+        type="hidden"
+        id="usuarioId"
+      >
+
+      <label for="usuarioNome">
+        Nome *
+      </label>
+
+      <input
+        type="text"
+        id="usuarioNome"
+        required
+      >
+
+      <label for="usuarioLogin">
+        Usuário *
+      </label>
+
+      <input
+        type="text"
+        id="usuarioLogin"
+        placeholder="ex.: admin.empresa"
+        required
+      >
+
+      <label for="usuarioEmpresa">
+        Empresa
+      </label>
+
+      <select id="usuarioEmpresa">
+        <option value="">
+          Selecione
+        </option>
+      </select>
+
+      <label for="usuarioPerfil">
+        Perfil *
+      </label>
+
+      <select
+        id="usuarioPerfil"
+        required
+      >
+        <option value="cliente_admin">
+          Administrador da Empresa
+        </option>
+
+        <option value="gestor">
+          Gestor
+        </option>
+
+        <option value="leitura">
+          Somente Leitura
+        </option>
+
+        <option value="super_admin">
+          Super Administrador
+        </option>
+      </select>
+
+      <label for="usuarioSenha">
+        Senha
+      </label>
+
+      <input
+        type="password"
+        id="usuarioSenha"
+        autocomplete="new-password"
+        placeholder="Obrigatória no cadastro. Em branco mantém a atual na edição."
+      >
+
+      <div class="admin-checkboxes">
+
+        <label>
+          <input
+            type="checkbox"
+            id="usuarioAtivo"
+            checked
+          >
+          Usuário ativo
+        </label>
+
+      </div>
+
+      <button
+        type="submit"
+        id="botaoSalvarUsuario"
+      >
+        Salvar Usuário
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
   <script src="/js/admin.js"></script>
 
 </body>
