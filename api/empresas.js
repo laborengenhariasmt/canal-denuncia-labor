@@ -462,7 +462,11 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "DELETE") {
-      return desativarEmpresa(req, res);
+      return desativarEmpresa(
+        req,
+        res,
+        sessao
+      );
     }
 
     return res.status(405).json({
