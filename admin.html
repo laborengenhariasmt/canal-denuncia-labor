@@ -525,6 +525,287 @@
 
   </div>
 
+  <!-- MODAL EMPRESA -->
+<div
+  id="modalEmpresa"
+  class="modal"
+>
+  <div class="modal-conteudo admin-modal-empresa">
+
+    <div class="admin-modal-topo">
+      <div>
+        <h2 id="tituloModalEmpresa">
+          Nova Empresa
+        </h2>
+
+        <p>
+          Dados de configuração do Canal de Denúncias.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="modal-fechar"
+        onclick="fecharModalEmpresa()"
+      >
+        Fechar
+      </button>
+    </div>
+
+    <form id="formEmpresa">
+
+      <input
+        type="hidden"
+        id="empresaId"
+      >
+
+      <div class="admin-form-grid">
+
+        <div>
+          <label for="empresaNome">
+            Nome da empresa *
+          </label>
+
+          <input
+            type="text"
+            id="empresaNome"
+            required
+          >
+        </div>
+
+        <div>
+          <label for="empresaNomeCurto">
+            Nome curto
+          </label>
+
+          <input
+            type="text"
+            id="empresaNomeCurto"
+          >
+        </div>
+
+        <div>
+          <label for="empresaCodigo">
+            Código do canal *
+          </label>
+
+          <input
+            type="text"
+            id="empresaCodigo"
+            placeholder="ex.: empresa-xyz"
+            required
+          >
+
+          <small>
+            Somente letras minúsculas, números e hífen.
+          </small>
+        </div>
+
+        <div>
+          <label for="empresaCnpj">
+            CNPJ
+          </label>
+
+          <input
+            type="text"
+            id="empresaCnpj"
+          >
+        </div>
+
+        <div>
+          <label for="empresaEmail">
+            E-mail de contato
+          </label>
+
+          <input
+            type="email"
+            id="empresaEmail"
+          >
+        </div>
+
+        <div>
+          <label for="empresaTelefone">
+            Telefone
+          </label>
+
+          <input
+            type="text"
+            id="empresaTelefone"
+          >
+        </div>
+
+        <div>
+          <label for="empresaSite">
+            Site
+          </label>
+
+          <input
+            type="text"
+            id="empresaSite"
+            placeholder="https://..."
+          >
+        </div>
+
+        <div>
+          <label for="empresaPlano">
+            Plano
+          </label>
+
+          <select id="empresaPlano">
+            <option value="Starter">
+              Starter
+            </option>
+
+            <option value="Profissional">
+              Profissional
+            </option>
+
+            <option value="Enterprise">
+              Enterprise
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label for="empresaLimiteUsuarios">
+            Limite de usuários
+          </label>
+
+          <input
+            type="number"
+            id="empresaLimiteUsuarios"
+            min="1"
+            value="3"
+          >
+        </div>
+
+        <div>
+          <label for="empresaLimiteDenuncias">
+            Limite de denúncias
+          </label>
+
+          <input
+            type="number"
+            id="empresaLimiteDenuncias"
+            min="1"
+            placeholder="Em branco = ilimitado"
+          >
+        </div>
+
+        <div>
+          <label for="empresaDataVencimento">
+            Vencimento
+          </label>
+
+          <input
+            type="date"
+            id="empresaDataVencimento"
+          >
+        </div>
+
+        <div>
+          <label for="empresaLogoUrl">
+            URL da logomarca
+          </label>
+
+          <input
+            type="text"
+            id="empresaLogoUrl"
+            placeholder="https://..."
+          >
+        </div>
+
+        <div>
+          <label for="empresaCorPrincipal">
+            Cor principal
+          </label>
+
+          <input
+            type="color"
+            id="empresaCorPrincipal"
+            value="#0b3b73"
+          >
+        </div>
+
+        <div>
+          <label for="empresaCorSecundaria">
+            Cor secundária
+          </label>
+
+          <input
+            type="color"
+            id="empresaCorSecundaria"
+            value="#0ea5e9"
+          >
+        </div>
+
+      </div>
+
+      <label for="empresaNomeCanal">
+        Nome do canal
+      </label>
+
+      <input
+        type="text"
+        id="empresaNomeCanal"
+        value="Canal de Denúncias"
+      >
+
+      <label for="empresaMensagemInicial">
+        Mensagem inicial
+      </label>
+
+      <textarea
+        id="empresaMensagemInicial"
+        rows="5"
+      ></textarea>
+
+      <div class="admin-checkboxes">
+
+        <label>
+          <input
+            type="checkbox"
+            id="empresaPermiteAnonima"
+            checked
+          >
+          Permitir denúncia anônima
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            id="empresaAtiva"
+            checked
+          >
+          Empresa ativa
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            id="empresaBloqueada"
+          >
+          Empresa bloqueada
+        </label>
+
+      </div>
+
+      <div
+        id="previewLinkEmpresa"
+        class="admin-link-canal"
+      ></div>
+
+      <button
+        type="submit"
+        id="botaoSalvarEmpresa"
+      >
+        Salvar Empresa
+      </button>
+
+    </form>
+
+  </div>
+</div>
 
   <script src="/js/admin.js"></script>
 
