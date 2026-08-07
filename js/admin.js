@@ -331,27 +331,261 @@ function montarResumo(denuncias) {
 }
 
 function montarIndicadoresDashboard(denuncias) {
-  const area = document.getElementById("dashboardIndicadores");
+  const areaIndicadores =
+    document.getElementById("dashboardIndicadores");
 
-  if (!area) return;
+  const areaDesempenho =
+    document.getElementById("dashboardDesempenho");
+
+  const areaStatus =
+    document.getElementById("dashboardStatus");
+
+  const areaUrgencias =
+    document.getElementById("dashboardUrgencias");
+
+  if (
+    !areaIndicadores ||
+    !areaDesempenho ||
+    !areaStatus ||
+    !areaUrgencias
+  ) {
+    return;
+  }
+
+  const agora = new Date();
+
+  const inicioMes = new Date(
+    agora.getFullYear(),
+    agora.getMonth(),
+    1
+  );
+
+  const total = denuncias.length;
 
   const abertas = denuncias.filter(
-    d => !["Concluída", "Arquivada"].includes(d.status || "Recebida")
-  ).length;
+    d =>
+      ![
+        "Concluída",
+        "Arquivada"
+      ].includes(
+        d.status || "Recebida"
+      )
+  );
 
   const criticas = denuncias.filter(
     d => d.urgencia === "Crítica"
-  ).length;
+  );
+
+  const recebidasMes = denuncias.filter(
+    d =>
+      d.criado_em &&
+      new Date(d.criado_em) >= inicioMes
+  );
 
   const concluidas = denuncias.filter(
     d => d.status === "Concluída"
-  ).length;
+  );
 
-  area.innerHTML = `
-    <p><strong>Ocorrências abertas:</strong> ${abertas}</p>
-    <p><strong>Ocorrências críticas:</strong> ${criticas}</p>
-    <p><strong>Ocorrências concluídas:</strong> ${concluidas}</p>
+  const concluidasMes = concluidas.filter(
+    d =>
+      d.atualizado_em &&
+      new Date(d.atualizado_em) >= inicioMes
+  );
+
+  const taxaConclusao =
+    total > 0
+      ? Math.round(
+          (concluidas.length / total) * 100
+        )
+      : 0;
+
+  let somaDiasAbertas = 0;
+
+  abertas.forEach(d => {
+    if (!d.criado_em) {
+      return;
+    }
+
+    const criado =
+      new Date(d.criado_em);
+
+    const diferenca =
+      agora.getTime() -
+      criado.getTime();
+
+    somaDiasAbertas +=
+      Math.max(
+        0,
+        diferenca / 86400000
+      );
+  });
+
+  const idadeMedia =
+    abertas.length > 0
+      ? (
+          somaDiasAbertas /
+          abertas.length
+        ).toFixed(1)
+      : "0";
+
+  areaIndicadores.innerHTML = `
+    <div class="dashboard-indicador">
+      <span>Ocorrências abertas</span>
+      <strong>${abertas.length}</strong>
+    </div>
+
+    <div class="dashboard-indicador">
+      <span>Prioridade crítica</span>
+      <strong>${criticas.length}</strong>
+    </div>
+
+    <div class="dashboard-indicador">
+      <span>Recebidas neste mês</span>
+      <strong>${recebidasMes.length}</strong>
+    </div>
+
+    <div class="dashboard-indicador">
+      <span>Concluídas neste mês</span>
+      <strong>${concluidasMes.length}</strong>
+    </div>
   `;
+
+  areaDesempenho.innerHTML = `
+    <div class="dashboard-indicador">
+      <span>Taxa geral de conclusão</span>
+      <strong>${taxaConclusao}%</strong>
+    </div>
+
+    <div class="dashboard-indicador">
+      <span>Idade média das ocorrências abertas</span>
+      <strong>${idadeMedia} dias</strong>
+    </div>
+
+    <div class="dashboard-indicador">
+      <span>Total histórico</span>
+      <strong>${total}</strong>
+    </div>
+
+    <div class="dashboard-indicador">
+      <span>Encerradas</span>
+      <strong>
+        ${
+          denuncias.filter(
+            d =>
+              [
+                "Concluída",
+                "Arquivada"
+              ].includes(d.status)
+          ).length
+        }
+      </strong>
+    </div>
+  `;
+
+  const statusLista = [
+    "Recebida",
+    "Em análise",
+    "Em investigação",
+    "Concluída",
+    "Arquivada"
+  ];
+
+  areaStatus.innerHTML =
+    statusLista.map(status => {
+
+      const quantidade =
+        denuncias.filter(
+          d =>
+            (d.status || "Recebida") ===
+            status
+        ).length;
+
+      const percentual =
+        total > 0
+          ? Math.round(
+              quantidade /
+              total *
+              100
+            )
+          : 0;
+
+      return `
+        <div class="dashboard-barra-item">
+
+          <div class="dashboard-barra-topo">
+            <span>
+              ${escaparHtml(status)}
+            </span>
+
+            <strong>
+              ${quantidade}
+              (${percentual}%)
+            </strong>
+          </div>
+
+          <div class="dashboard-barra">
+            <div
+              class="dashboard-barra-preenchimento"
+              style="width:${percentual}%"
+            ></div>
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  const urgencias = [
+    "Crítica",
+    "Alta",
+    "Média",
+    "Baixa"
+  ];
+
+  areaUrgencias.innerHTML =
+    urgencias.map(urgencia => {
+
+      const quantidade =
+        denuncias.filter(
+          d => d.urgencia === urgencia
+        ).length;
+
+      const percentual =
+        total > 0
+          ? Math.round(
+              quantidade /
+              total *
+              100
+            )
+          : 0;
+
+      return `
+        <div class="dashboard-barra-item">
+
+          <div class="dashboard-barra-topo">
+
+            <span>
+              ${prioridadeIcone(urgencia)}
+              ${escaparHtml(urgencia)}
+            </span>
+
+            <strong>
+              ${quantidade}
+            </strong>
+
+          </div>
+
+          <div class="dashboard-barra">
+            <div
+              class="dashboard-barra-preenchimento"
+              style="width:${percentual}%"
+            ></div>
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
 }
 
 function prioridadeIcone(urgencia) {
