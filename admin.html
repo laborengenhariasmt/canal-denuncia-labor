@@ -234,68 +234,142 @@
           id="tela-dashboard"
           class="admin-tela ativa"
         >
-
+        
+          <!-- KPIs DAS DENÚNCIAS -->
           <div
             id="resumoDenuncias"
             class="dashboard-resumo"
           ></div>
-
+        
+        
+          <!-- KPIs GERAIS DO SUPER ADMIN -->
+          <div
+            id="dashboardSaas"
+            class="dashboard-saas somente-super-admin"
+          >
+        
+            <div class="dashboard-saas-card">
+              <span>Empresas</span>
+              <strong id="kpiEmpresas">0</strong>
+              <small id="kpiEmpresasDetalhe">
+                cadastradas
+              </small>
+            </div>
+        
+            <div class="dashboard-saas-card">
+              <span>Empresas Ativas</span>
+              <strong id="kpiEmpresasAtivas">0</strong>
+              <small>
+                em operação
+              </small>
+            </div>
+        
+            <div class="dashboard-saas-card">
+              <span>Usuários</span>
+              <strong id="kpiUsuarios">0</strong>
+              <small id="kpiUsuariosDetalhe">
+                cadastrados
+              </small>
+            </div>
+        
+            <div class="dashboard-saas-card">
+              <span>Usuários Ativos</span>
+              <strong id="kpiUsuariosAtivos">0</strong>
+              <small>
+                com acesso
+              </small>
+            </div>
+        
+          </div>
+        
+        
           <div class="admin-grid-2">
-
+        
+            <!-- INDICADORES -->
             <section class="admin-bloco">
-
-              <h2>Visão Geral</h2>
-
-              <p>
-                Acompanhe os principais indicadores das ocorrências registradas.
-              </p>
-
-              <div id="dashboardIndicadores">
+        
+              <h2>Indicadores Operacionais</h2>
+        
+              <div
+                id="dashboardIndicadores"
+                class="dashboard-indicadores"
+              ></div>
+        
+            </section>
+        
+        
+            <!-- DESEMPENHO -->
+            <section class="admin-bloco">
+        
+              <h2>Desempenho</h2>
+        
+              <div
+                id="dashboardDesempenho"
+                class="dashboard-indicadores"
+              ></div>
+        
+            </section>
+        
+          </div>
+        
+        
+          <div class="admin-grid-2">
+        
+            <!-- DISTRIBUIÇÃO -->
+            <section class="admin-bloco">
+        
+              <h2>Distribuição por Status</h2>
+        
+              <div id="dashboardStatus"></div>
+        
+            </section>
+        
+        
+            <!-- PRIORIDADES -->
+            <section class="admin-bloco">
+        
+              <h2>Prioridades</h2>
+        
+              <div id="dashboardUrgencias"></div>
+        
+            </section>
+        
+          </div>
+        
+        
+          <!-- SUPER ADMIN -->
+          <section
+            class="admin-bloco somente-super-admin"
+            id="dashboardEmpresasBloco"
+          >
+        
+            <div class="admin-bloco-cabecalho">
+        
+              <div>
+                <h2>Visão por Empresa</h2>
+        
                 <p>
-                  Os indicadores detalhados serão exibidos aqui.
+                  Distribuição das denúncias entre os clientes da plataforma.
                 </p>
               </div>
-
-            </section>
-
-
-            <section class="admin-bloco">
-
-              <h2>Atalhos</h2>
-
-              <div class="admin-atalhos">
-
-                <button
-                  type="button"
-                  onclick="abrirTelaPorNome('denuncias')"
-                >
-                  Ver denúncias
-                </button>
-
-                <button
-                  type="button"
-                  class="somente-super-admin"
-                  onclick="abrirTelaPorNome('empresas')"
-                >
-                  Gerenciar empresas
-                </button>
-
-                <button
-                  type="button"
-                  class="somente-super-admin"
-                  onclick="abrirTelaPorNome('usuarios')"
-                >
-                  Gerenciar usuários
-                </button>
-
-              </div>
-
-            </section>
-
-          </div>
-
+        
+              <button
+                type="button"
+                class="admin-btn-secundario"
+                onclick="abrirTelaPorNome('empresas')"
+              >
+                Gerenciar empresas
+              </button>
+        
+            </div>
+        
+            <div id="dashboardEmpresas">
+              Carregando...
+            </div>
+        
+          </section>
+        
         </section>
-
 
         <!-- DENÚNCIAS -->
         <section
