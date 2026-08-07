@@ -100,6 +100,7 @@ function abrirPainel() {
   exibirDadosUsuario();
   carregarIdentidadeEmpresa();
   carregarDenuncias();
+  carregarDashboardSaas();
   abrirTelaPorNome("dashboard");
 }
 
