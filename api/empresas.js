@@ -446,7 +446,11 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      return criarEmpresa(req, res);
+      return criarEmpresa(
+        req,
+        res,
+        sessao
+      );
     }
 
     if (req.method === "PATCH") {
