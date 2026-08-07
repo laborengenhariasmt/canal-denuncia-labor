@@ -454,7 +454,11 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "PATCH") {
-      return atualizarEmpresa(req, res);
+      return atualizarEmpresa(
+        req,
+        res,
+        sessao
+      );
     }
 
     if (req.method === "DELETE") {
