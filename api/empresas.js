@@ -397,6 +397,30 @@ async function atualizarEmpresa(req, res, sessao) {
     });
   }
 
+  await registrarLogSistema({
+    req,
+  
+    usuarioId:
+      sessao.usuario_id,
+  
+    empresaId:
+      retorno[0].id,
+  
+    tipoAcao:
+      "empresa_alterada",
+  
+    recurso:
+      "empresa",
+  
+    recursoId:
+      retorno[0].id,
+  
+    descricao:
+      `Empresa ${retorno[0].nome} alterada.`,
+  
+    sucesso: true
+  });
+  
   return res.status(200).json({
     sucesso: true,
     empresa: retorno[0]
