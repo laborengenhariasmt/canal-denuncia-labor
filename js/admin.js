@@ -1,6 +1,7 @@
 let denunciasCarregadas = [];
 let empresasCarregadas = [];
 let usuariosCarregados = [];
+let logsCarregados = [];
 let usuarioLogado = null;
 
 function escaparHtml(valor) {
