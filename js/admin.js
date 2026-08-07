@@ -1617,6 +1617,179 @@ async function salvarUsuario(evento) {
 }
 
 /* =========================================================
+   DASHBOARD DO SUPER ADMIN
+   ========================================================= */
+
+async function carregarDashboardSaas() {
+  if (
+    usuarioLogado?.perfil !==
+    "super_admin"
+  ) {
+    return;
+  }
+
+  try {
+    const [
+      respostaEmpresas,
+      respostaUsuarios
+    ] = await Promise.all([
+      fetch("/api/empresas"),
+      fetch("/api/usuarios")
+    ]);
+
+    const empresas =
+      await respostaEmpresas.json();
+
+    const usuarios =
+      await respostaUsuarios.json();
+
+    if (
+      !respostaEmpresas.ok ||
+      !respostaUsuarios.ok
+    ) {
+      return;
+    }
+
+    empresasCarregadas =
+      Array.isArray(empresas)
+        ? empresas
+        : [];
+
+    usuariosCarregados =
+      Array.isArray(usuarios)
+        ? usuarios
+        : [];
+
+    const empresasAtivas =
+      empresasCarregadas.filter(
+        e =>
+          e.ativo !== false &&
+          e.bloqueada !== true
+      );
+
+    const usuariosAtivos =
+      usuariosCarregados.filter(
+        u => u.ativo !== false
+      );
+
+    document.getElementById(
+      "kpiEmpresas"
+    ).textContent =
+      empresasCarregadas.length;
+
+    document.getElementById(
+      "kpiEmpresasAtivas"
+    ).textContent =
+      empresasAtivas.length;
+
+    document.getElementById(
+      "kpiUsuarios"
+    ).textContent =
+      usuariosCarregados.length;
+
+    document.getElementById(
+      "kpiUsuariosAtivos"
+    ).textContent =
+      usuariosAtivos.length;
+
+    montarDashboardEmpresas();
+
+  } catch (erro) {
+    console.error(
+      "Erro no dashboard SaaS:",
+      erro
+    );
+  }
+}
+
+function montarDashboardEmpresas() {
+  const area =
+    document.getElementById(
+      "dashboardEmpresas"
+    );
+
+  if (!area) {
+    return;
+  }
+
+  const linhas =
+    empresasCarregadas
+      .map(empresa => {
+
+        const denunciasEmpresa =
+          denunciasCarregadas.filter(
+            d =>
+              Number(d.empresa_id) ===
+              Number(empresa.id)
+          );
+
+        const abertas =
+          denunciasEmpresa.filter(
+            d =>
+              ![
+                "Concluída",
+                "Arquivada"
+              ].includes(
+                d.status ||
+                "Recebida"
+              )
+          ).length;
+
+        const criticas =
+          denunciasEmpresa.filter(
+            d =>
+              d.urgencia ===
+              "Crítica"
+          ).length;
+
+        return {
+          nome: empresa.nome,
+          total:
+            denunciasEmpresa.length,
+          abertas,
+          criticas
+        };
+      })
+      .sort(
+        (a, b) =>
+          b.total - a.total
+      );
+
+  area.innerHTML = `
+    <div class="dashboard-empresa-linha">
+      <div>Empresa</div>
+      <div>Total</div>
+      <div>Abertas</div>
+      <div>Críticas</div>
+    </div>
+
+    ${linhas.map(item => `
+      <div class="dashboard-empresa-linha">
+
+        <div>
+          <strong>
+            ${escaparHtml(item.nome)}
+          </strong>
+        </div>
+
+        <div>
+          ${item.total}
+        </div>
+
+        <div>
+          ${item.abertas}
+        </div>
+
+        <div>
+          ${item.criticas}
+        </div>
+
+      </div>
+    `).join("")}
+  `;
+}
+
+/* =========================================================
    EVENTOS
    ========================================================= */
 
