@@ -304,7 +304,7 @@ async function criarEmpresa(req, res, sessao) {
   });
 }
 
-async function atualizarEmpresa(req, res) {
+async function atualizarEmpresa(req, res, sessao) {
   const id = Number(req.body?.id);
 
   if (!Number.isInteger(id) || id <= 0) {
