@@ -1406,6 +1406,10 @@ document
   .addEventListener("submit", salvarEmpresa);
 
 document
+  .getElementById("formUsuario")
+  .addEventListener("submit", salvarUsuario);
+
+document
   .getElementById("empresaCodigo")
   .addEventListener("input", atualizarPreviewLink);
 
