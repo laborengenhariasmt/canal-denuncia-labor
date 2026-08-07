@@ -239,3 +239,355 @@ button:hover {
   background: #555;
   margin-bottom: 20px;
 }
+/* =========================================================
+   PAINEL ADMINISTRATIVO
+   ========================================================= */
+
+.admin-body {
+  margin: 0;
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.admin-login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #111827, #374151);
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 460px;
+  margin: 0;
+}
+
+.admin-login-logo {
+  display: block;
+  max-width: 220px;
+  width: 70%;
+  margin: 0 auto 25px;
+  background: #fff;
+  padding: 14px;
+  border-radius: 16px;
+}
+
+.admin-login-card h1 {
+  text-align: center;
+  margin: 0 0 10px;
+}
+
+.admin-login-subtitulo {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 25px;
+}
+
+.admin-login-erro {
+  color: #b91c1c;
+  margin-top: 15px;
+}
+
+.admin-app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+}
+
+.admin-sidebar {
+  background: #111827;
+  color: #fff;
+  min-height: 100vh;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.admin-sidebar-topo {
+  margin-bottom: 28px;
+}
+
+.admin-sidebar-logo {
+  display: block;
+  width: 100%;
+  max-width: 170px;
+  max-height: 90px;
+  object-fit: contain;
+  background: #fff;
+  padding: 10px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+
+.admin-sidebar-empresa strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.admin-sidebar-empresa span {
+  display: block;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.admin-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.admin-menu-item {
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: transparent;
+  color: #d1d5db;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.admin-menu-item:hover {
+  background: #1f2937;
+  color: #fff;
+}
+
+.admin-menu-item.ativo {
+  background: var(--laranja);
+  color: #fff;
+}
+
+.admin-sidebar-rodape {
+  padding-top: 18px;
+  border-top: 1px solid #374151;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.admin-btn-sair {
+  width: 100%;
+  margin-top: 14px;
+  background: #374151;
+  padding: 11px;
+  font-size: 14px;
+}
+
+.admin-btn-sair:hover {
+  background: #4b5563;
+}
+
+.admin-main {
+  min-width: 0;
+}
+
+.admin-topbar {
+  background: #fff;
+  min-height: 92px;
+  padding: 22px 32px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-topbar h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.admin-topbar p {
+  margin: 6px 0 0;
+  color: #6b7280;
+}
+
+.admin-topbar-usuario {
+  text-align: right;
+  font-size: 13px;
+}
+
+.admin-topbar-usuario span {
+  display: block;
+}
+
+#nomeUsuarioTopo {
+  font-weight: 800;
+}
+
+#empresaUsuarioTopo {
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.admin-content {
+  padding: 30px;
+}
+
+.admin-tela {
+  display: none;
+}
+
+.admin-tela.ativa {
+  display: block;
+}
+
+.admin-bloco {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+}
+
+.admin-bloco h2 {
+  margin-top: 0;
+  color: #111827;
+}
+
+.admin-bloco-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-bloco-cabecalho p {
+  margin-top: 5px;
+  color: #6b7280;
+}
+
+.admin-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.admin-atalhos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-atalhos button {
+  margin: 0;
+}
+
+.admin-filtros {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.admin-filtros > div {
+  min-width: 240px;
+}
+
+.admin-btn-secundario {
+  margin: 0;
+  background: #374151;
+  padding: 11px 18px;
+  font-size: 14px;
+}
+
+.admin-btn-secundario:hover {
+  background: #111827;
+}
+
+.admin-lista-denuncias {
+  margin-top: 10px;
+}
+
+.admin-content .dashboard-resumo {
+  margin-top: 0;
+}
+
+.somente-super-admin {
+  display: none;
+}
+
+.usuario-super-admin .somente-super-admin {
+  display: block;
+}
+
+.admin-content button {
+  border-radius: 10px;
+}
+
+.admin-content .btn-pequeno {
+  border-radius: 8px;
+}
+
+.admin-content .tabela-denuncias th {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.admin-content .resumo-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-left: 5px solid var(--laranja);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+@media (max-width: 900px) {
+  .admin-app {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    position: relative;
+    height: auto;
+    min-height: auto;
+  }
+
+  .admin-menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-sidebar-logo {
+    max-width: 140px;
+  }
+
+  .admin-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-topbar {
+    padding: 18px;
+    align-items: flex-start;
+  }
+
+  .admin-content {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-menu {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-topbar {
+    flex-direction: column;
+  }
+
+  .admin-topbar-usuario {
+    text-align: left;
+  }
+
+  .admin-bloco {
+    padding: 18px;
+  }
+}
