@@ -1398,6 +1398,10 @@ document
   .addEventListener("click", novaEmpresa);
 
 document
+  .getElementById("botaoNovoUsuario")
+  .addEventListener("click", novoUsuario);
+
+document
   .getElementById("formEmpresa")
   .addEventListener("submit", salvarEmpresa);
 
