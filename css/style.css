@@ -847,3 +847,54 @@ button:hover {
     grid-template-columns: 1fr;
   }
 }
+/* =========================================================
+   LOGS E AUDITORIA
+   ========================================================= */
+
+.log-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.log-resumo-item {
+  background: #f3f4f6;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.log-resumo-item strong {
+  color: #111827;
+  margin-right: 5px;
+}
+
+.log-tipo {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.log-status {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.log-acao {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.log-observacao {
+  max-width: 380px;
+  white-space: normal;
+  line-height: 1.4;
+  color: #4b5563;
+}
+
+.log-data {
+  white-space: nowrap;
+}
