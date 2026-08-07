@@ -973,6 +973,416 @@ function abrirCanalEmpresa(codigo) {
 }
 
 /* =========================================================
+   USUÁRIOS
+   ========================================================= */
+
+async function carregarUsuarios() {
+  const area = document.getElementById("areaUsuarios");
+
+  if (!area) {
+    return;
+  }
+
+  area.innerHTML = "Carregando usuários...";
+
+  try {
+    const resposta = await fetch("/api/usuarios");
+    const usuarios = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(
+        usuarios.erro || "Erro ao carregar usuários."
+      );
+    }
+
+    usuariosCarregados =
+      Array.isArray(usuarios) ? usuarios : [];
+
+    renderizarUsuarios();
+
+  } catch (erro) {
+    console.error(erro);
+
+    area.innerHTML = `
+      <p>${escaparHtml(erro.message)}</p>
+    `;
+  }
+}
+
+function renderizarUsuarios() {
+  const area = document.getElementById("areaUsuarios");
+
+  if (!area) {
+    return;
+  }
+
+  if (!usuariosCarregados.length) {
+    area.innerHTML =
+      "<p>Nenhum usuário cadastrado.</p>";
+
+    return;
+  }
+
+  area.innerHTML = `
+    <div class="tabela-wrapper">
+
+      <table class="tabela-denuncias">
+
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Usuário</th>
+            <th>Empresa</th>
+            <th>Perfil</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${usuariosCarregados.map(usuario => {
+
+            let nomeEmpresa = "Labor";
+
+            if (usuario.empresas) {
+              nomeEmpresa =
+                usuario.empresas.nome ||
+                "Labor";
+            }
+
+            return `
+              <tr>
+
+                <td>
+                  <strong>
+                    ${escaparHtml(usuario.nome)}
+                  </strong>
+                </td>
+
+                <td>
+                  ${escaparHtml(usuario.usuario)}
+                </td>
+
+                <td>
+                  ${escaparHtml(nomeEmpresa)}
+                </td>
+
+                <td>
+                  ${escaparHtml(
+                    formatarPerfil(usuario.perfil)
+                  )}
+                </td>
+
+                <td>
+                  ${
+                    usuario.ativo
+                      ? `
+                        <span class="admin-status admin-status-ativa">
+                          Ativo
+                        </span>
+                      `
+                      : `
+                        <span class="admin-status admin-status-inativa">
+                          Inativo
+                        </span>
+                      `
+                  }
+                </td>
+
+                <td>
+                  <button
+                    type="button"
+                    class="admin-btn-editar"
+                    onclick="editarUsuario(${Number(usuario.id)})"
+                  >
+                    Editar
+                  </button>
+                </td>
+
+              </tr>
+            `;
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  `;
+}
+
+async function garantirEmpresasParaUsuario() {
+  if (empresasCarregadas.length) {
+    preencherEmpresasUsuario();
+    return;
+  }
+
+  const resposta = await fetch("/api/empresas");
+  const empresas = await resposta.json();
+
+  if (!resposta.ok) {
+    throw new Error(
+      empresas.erro ||
+      "Erro ao carregar empresas."
+    );
+  }
+
+  empresasCarregadas =
+    Array.isArray(empresas) ? empresas : [];
+
+  preencherEmpresasUsuario();
+}
+
+function preencherEmpresasUsuario() {
+  const campo =
+    document.getElementById("usuarioEmpresa");
+
+  if (!campo) {
+    return;
+  }
+
+  campo.innerHTML = `
+    <option value="">
+      Selecione
+    </option>
+
+    ${empresasCarregadas
+      .filter(empresa => empresa.ativo !== false)
+      .map(empresa => `
+        <option value="${Number(empresa.id)}">
+          ${escaparHtml(empresa.nome)}
+        </option>
+      `)
+      .join("")}
+  `;
+}
+
+async function novoUsuario() {
+  try {
+    await garantirEmpresasParaUsuario();
+
+    document
+      .getElementById("formUsuario")
+      .reset();
+
+    document.getElementById("usuarioId").value = "";
+
+    document.getElementById("usuarioPerfil").value =
+      "cliente_admin";
+
+    document.getElementById("usuarioAtivo").checked =
+      true;
+
+    document.getElementById(
+      "tituloModalUsuario"
+    ).textContent = "Novo Usuário";
+
+    document.getElementById(
+      "modalUsuario"
+    ).style.display = "flex";
+
+  } catch (erro) {
+    alert(
+      "Não foi possível abrir o cadastro: " +
+      erro.message
+    );
+  }
+}
+
+async function editarUsuario(id) {
+  const usuario = usuariosCarregados.find(
+    item => Number(item.id) === Number(id)
+  );
+
+  if (!usuario) {
+    return;
+  }
+
+  try {
+    await garantirEmpresasParaUsuario();
+
+    document.getElementById("usuarioId").value =
+      usuario.id;
+
+    document.getElementById("usuarioNome").value =
+      usuario.nome || "";
+
+    document.getElementById("usuarioLogin").value =
+      usuario.usuario || "";
+
+    document.getElementById("usuarioEmpresa").value =
+      usuario.empresa_id || "";
+
+    document.getElementById("usuarioPerfil").value =
+      usuario.perfil || "cliente_admin";
+
+    document.getElementById("usuarioSenha").value =
+      "";
+
+    document.getElementById("usuarioAtivo").checked =
+      usuario.ativo !== false;
+
+    document.getElementById(
+      "tituloModalUsuario"
+    ).textContent = "Editar Usuário";
+
+    document.getElementById(
+      "modalUsuario"
+    ).style.display = "flex";
+
+  } catch (erro) {
+    alert(
+      "Não foi possível editar o usuário: " +
+      erro.message
+    );
+  }
+}
+
+function fecharModalUsuario() {
+  document.getElementById(
+    "modalUsuario"
+  ).style.display = "none";
+}
+
+async function salvarUsuario(evento) {
+  evento.preventDefault();
+
+  const idTexto =
+    document.getElementById("usuarioId").value;
+
+  const id =
+    idTexto ? Number(idTexto) : null;
+
+  const empresaTexto =
+    document.getElementById("usuarioEmpresa").value;
+
+  const empresaId =
+    empresaTexto
+      ? Number(empresaTexto)
+      : null;
+
+  const dados = {
+    nome:
+      document
+        .getElementById("usuarioNome")
+        .value
+        .trim(),
+
+    usuario:
+      document
+        .getElementById("usuarioLogin")
+        .value
+        .trim()
+        .toLowerCase(),
+
+    empresa_id:
+      empresaId,
+
+    perfil:
+      document.getElementById(
+        "usuarioPerfil"
+      ).value,
+
+    senha:
+      document.getElementById(
+        "usuarioSenha"
+      ).value,
+
+    ativo:
+      document.getElementById(
+        "usuarioAtivo"
+      ).checked
+  };
+
+  if (id) {
+    dados.id = id;
+  }
+
+  if (!dados.nome) {
+    alert("Informe o nome.");
+    return;
+  }
+
+  if (!dados.usuario) {
+    alert("Informe o usuário.");
+    return;
+  }
+
+  if (
+    dados.perfil !== "super_admin" &&
+    !dados.empresa_id
+  ) {
+    alert("Selecione a empresa.");
+    return;
+  }
+
+  if (!id && !dados.senha) {
+    alert(
+      "Informe uma senha para o novo usuário."
+    );
+
+    return;
+  }
+
+  const botao =
+    document.getElementById(
+      "botaoSalvarUsuario"
+    );
+
+  botao.disabled = true;
+  botao.innerText = "Salvando...";
+
+  try {
+    const resposta = await fetch(
+      "/api/usuarios",
+      {
+        method: id ? "PATCH" : "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body: JSON.stringify(dados)
+      }
+    );
+
+    const resultado =
+      await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(
+        resultado.erro ||
+        "Erro ao salvar usuário."
+      );
+    }
+
+    alert(
+      id
+        ? "Usuário atualizado com sucesso."
+        : "Usuário criado com sucesso."
+    );
+
+    fecharModalUsuario();
+
+    await carregarUsuarios();
+
+  } catch (erro) {
+    alert(
+      "Não foi possível salvar o usuário: " +
+      erro.message
+    );
+
+    console.error(erro);
+
+  } finally {
+    botao.disabled = false;
+    botao.innerText = "Salvar Usuário";
+  }
+}
+
+/* =========================================================
    EVENTOS
    ========================================================= */
 
