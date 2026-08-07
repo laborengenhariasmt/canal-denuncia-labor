@@ -1793,7 +1793,344 @@ function montarDashboardEmpresas() {
     `).join("")}
   `;
 }
+/* =========================================================
+   LOGS E AUDITORIA
+   ========================================================= */
 
+async function carregarLogs() {
+  const area =
+    document.getElementById("areaLogs");
+
+  if (!area) {
+    return;
+  }
+
+  area.innerHTML =
+    "Carregando histórico...";
+
+  try {
+    const resposta =
+      await fetch("/api/logs");
+
+    const logs =
+      await resposta.json();
+
+    if (resposta.status === 401) {
+      abrirLogin();
+
+      throw new Error(
+        "Sua sessão expirou. Faça login novamente."
+      );
+    }
+
+    if (!resposta.ok) {
+      throw new Error(
+        logs.erro ||
+        "Erro ao carregar histórico."
+      );
+    }
+
+    logsCarregados =
+      Array.isArray(logs)
+        ? logs
+        : [];
+
+    montarResumoLogs();
+
+    aplicarFiltrosLogs();
+
+  } catch (erro) {
+    console.error(erro);
+
+    area.innerHTML = `
+      <p>
+        ${escaparHtml(erro.message)}
+      </p>
+    `;
+  }
+}
+
+function montarResumoLogs() {
+  const area =
+    document.getElementById(
+      "resumoLogs"
+    );
+
+  if (!area) {
+    return;
+  }
+
+  const alteracoesStatus =
+    logsCarregados.filter(
+      log =>
+        log.tipo_acao ===
+        "alteracao_status"
+    ).length;
+
+  const registrosAcao =
+    logsCarregados.filter(
+      log =>
+        log.tipo_acao ===
+        "registro_acao"
+    ).length;
+
+  area.innerHTML = `
+    <div class="log-resumo">
+
+      <div class="log-resumo-item">
+        <strong>
+          ${logsCarregados.length}
+        </strong>
+        registros
+      </div>
+
+      <div class="log-resumo-item">
+        <strong>
+          ${alteracoesStatus}
+        </strong>
+        alterações de status
+      </div>
+
+      <div class="log-resumo-item">
+        <strong>
+          ${registrosAcao}
+        </strong>
+        ações registradas
+      </div>
+
+    </div>
+  `;
+}
+
+function aplicarFiltrosLogs() {
+  const tipo =
+    document.getElementById(
+      "filtroLogTipo"
+    )?.value || "Todos";
+
+  const busca =
+    document
+      .getElementById(
+        "filtroLogBusca"
+      )
+      ?.value
+      ?.trim()
+      ?.toLowerCase() || "";
+
+  let filtrados =
+    [...logsCarregados];
+
+  if (tipo !== "Todos") {
+    filtrados =
+      filtrados.filter(
+        log =>
+          log.tipo_acao === tipo
+      );
+  }
+
+  if (busca) {
+    filtrados =
+      filtrados.filter(log => {
+
+        const protocolo =
+          log.denuncias?.protocolo ||
+          "";
+
+        const usuario =
+          log.usuarios?.nome ||
+          "";
+
+        const login =
+          log.usuarios?.usuario ||
+          "";
+
+        const empresa =
+          log.empresas?.nome ||
+          "";
+
+        const texto = `
+          ${protocolo}
+          ${usuario}
+          ${login}
+          ${empresa}
+        `.toLowerCase();
+
+        return texto.includes(busca);
+      });
+  }
+
+  renderizarLogs(filtrados);
+}
+
+function formatarTipoLog(tipo) {
+  const tipos = {
+    alteracao_status:
+      "Alteração de status",
+
+    registro_acao:
+      "Registro de ação"
+  };
+
+  return tipos[tipo] ||
+    tipo ||
+    "Ação";
+}
+
+function renderizarLogs(logs) {
+  const area =
+    document.getElementById(
+      "areaLogs"
+    );
+
+  if (!area) {
+    return;
+  }
+
+  if (!logs.length) {
+    area.innerHTML = `
+      <p>
+        Nenhum registro encontrado.
+      </p>
+    `;
+
+    return;
+  }
+
+  area.innerHTML = `
+    <div class="tabela-wrapper">
+
+      <table class="tabela-denuncias">
+
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Empresa</th>
+            <th>Usuário</th>
+            <th>Protocolo</th>
+            <th>Ação</th>
+            <th>Detalhes</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${logs.map(log => {
+
+            const classeTipo =
+              log.tipo_acao ===
+              "alteracao_status"
+                ? "log-status"
+                : "log-acao";
+
+            let detalhes = "";
+
+            if (
+              log.tipo_acao ===
+              "alteracao_status"
+            ) {
+              detalhes = `
+                ${escaparHtml(
+                  log.status_anterior ||
+                  "Recebida"
+                )}
+                →
+                ${escaparHtml(
+                  log.status_novo ||
+                  ""
+                )}
+              `;
+            }
+
+            if (
+              log.tipo_acao ===
+              "registro_acao"
+            ) {
+              detalhes =
+                escaparHtml(
+                  log.observacao ||
+                  "Ação registrada"
+                );
+            }
+
+            return `
+              <tr>
+
+                <td class="log-data">
+                  ${
+                    log.criado_em
+                      ? new Date(
+                          log.criado_em
+                        ).toLocaleString(
+                          "pt-BR"
+                        )
+                      : "-"
+                  }
+                </td>
+
+                <td>
+                  ${escaparHtml(
+                    log.empresas?.nome ||
+                    "Não informada"
+                  )}
+                </td>
+
+                <td>
+                  <strong>
+                    ${escaparHtml(
+                      log.usuarios?.nome ||
+                      "Sistema"
+                    )}
+                  </strong>
+
+                  ${
+                    log.usuarios?.usuario
+                      ? `
+                        <br>
+                        <small>
+                          ${escaparHtml(
+                            log.usuarios.usuario
+                          )}
+                        </small>
+                      `
+                      : ""
+                  }
+                </td>
+
+                <td>
+                  ${escaparHtml(
+                    log.denuncias?.protocolo ||
+                    "-"
+                  )}
+                </td>
+
+                <td>
+                  <span
+                    class="log-tipo ${classeTipo}"
+                  >
+                    ${escaparHtml(
+                      formatarTipoLog(
+                        log.tipo_acao
+                      )
+                    )}
+                  </span>
+                </td>
+
+                <td class="log-observacao">
+                  ${detalhes}
+                </td>
+
+              </tr>
+            `;
+
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  `;
+}
 /* =========================================================
    EVENTOS
    ========================================================= */
