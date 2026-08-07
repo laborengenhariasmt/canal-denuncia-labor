@@ -298,6 +298,30 @@ async function criarEmpresa(req, res, sessao) {
     });
   }
 
+  await registrarLogSistema({
+    req,
+  
+    usuarioId:
+      sessao.usuario_id,
+  
+    empresaId:
+      retorno[0].id,
+  
+    tipoAcao:
+      "empresa_criada",
+  
+    recurso:
+      "empresa",
+  
+    recursoId:
+      retorno[0].id,
+  
+    descricao:
+      `Empresa ${retorno[0].nome} cadastrada.`,
+  
+    sucesso: true
+  });
+  
   return res.status(201).json({
     sucesso: true,
     empresa: retorno[0]
