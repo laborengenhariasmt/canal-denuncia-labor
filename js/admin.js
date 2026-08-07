@@ -227,6 +227,9 @@ function abrirTela(nomeTela, botao) {
   ) {
     carregarUsuarios();
   }
+  if (nomeTela === "logs") {
+    carregarLogs();
+  }
 }
 
   
