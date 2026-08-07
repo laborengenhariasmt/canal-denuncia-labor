@@ -379,7 +379,7 @@ async function atualizarEmpresa(req, res, sessao) {
   });
 }
 
-async function desativarEmpresa(req, res) {
+async function desativarEmpresa(req, res, sessao) {
   const id = Number(req.body?.id);
 
   if (!Number.isInteger(id) || id <= 0) {
