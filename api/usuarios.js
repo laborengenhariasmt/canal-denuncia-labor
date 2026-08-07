@@ -278,11 +278,42 @@ async function salvarUsuario(
     });
   }
 
+  const usuarioSalvo =
+    retorno[0];
+  
+  await registrarLogSistema({
+    req,
+  
+    usuarioId:
+      sessao.usuario_id,
+  
+    empresaId:
+      usuarioSalvo.empresa_id,
+  
+    tipoAcao:
+      id
+        ? "usuario_alterado"
+        : "usuario_criado",
+  
+    recurso:
+      "usuario",
+  
+    recursoId:
+      usuarioSalvo.id,
+  
+    descricao:
+      id
+        ? `Usuário ${usuarioSalvo.usuario} alterado.`
+        : `Usuário ${usuarioSalvo.usuario} criado.`,
+  
+    sucesso: true
+  });
+  
   return res.status(
     id ? 200 : 201
   ).json({
     sucesso: true,
-    usuario: retorno[0]
+    usuario: usuarioSalvo
   });
 }
 
