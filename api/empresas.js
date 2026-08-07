@@ -229,7 +229,7 @@ async function listarEmpresas(req, res) {
   return res.status(200).json(dados);
 }
 
-async function criarEmpresa(req, res) {
+async function criarEmpresa(req, res, sessao) {
   const dados = req.body || {};
 
   const nome = limparTexto(dados.nome);
