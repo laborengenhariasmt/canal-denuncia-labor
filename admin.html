@@ -8,156 +8,525 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Painel de Denúncias | Labor</title>
+  <title>Painel Administrativo | Canal de Denúncias</title>
 
   <link rel="stylesheet" href="/css/style.css">
 </head>
 
-<body>
+<body class="admin-body">
 
-<header class="hero">
-  <img
-    src="/assets/logo-labor.png"
-    alt="Labor Engenharia"
-    class="logo"
+  <!-- LOGIN -->
+  <main
+    class="admin-login-wrapper"
+    id="loginCard"
   >
+    <section class="card admin-login-card">
 
-  <h1>Painel Interno de Denúncias</h1>
-
-  <p class="subtitulo">
-    Área restrita para acompanhamento das ocorrências registradas.
-  </p>
-</header>
-
-<main class="container">
-
-  <section class="card" id="loginCard">
-
-    <h2>Acesso Restrito</h2>
-
-    <form id="loginForm">
-
-      <label for="usuario">
-        Usuário
-      </label>
-
-      <input
-        type="text"
-        id="usuario"
-        placeholder="Digite o usuário"
-        autocomplete="username"
-        required
+      <img
+        src="/assets/logo-labor.png"
+        alt="Labor Engenharia"
+        class="admin-login-logo"
       >
 
-      <label for="senha">
-        Senha
-      </label>
+      <h1>Painel Administrativo</h1>
 
-      <input
-        type="password"
-        id="senha"
-        placeholder="Digite a senha"
-        autocomplete="current-password"
-        required
-      >
+      <p class="admin-login-subtitulo">
+        Acesso restrito à gestão do Canal de Denúncias.
+      </p>
 
-      <button type="submit" id="botaoLogin">
-        Entrar
-      </button>
+      <form id="loginForm">
 
-    </form>
+        <label for="usuario">
+          Usuário
+        </label>
 
-    <p
-      id="erroLogin"
-      style="color: red; margin-top: 15px;"
-    ></p>
+        <input
+          type="text"
+          id="usuario"
+          placeholder="Digite o usuário"
+          autocomplete="username"
+          required
+        >
 
-  </section>
+        <label for="senha">
+          Senha
+        </label>
 
-  <section
-    class="card"
+        <input
+          type="password"
+          id="senha"
+          placeholder="Digite a senha"
+          autocomplete="current-password"
+          required
+        >
+
+        <button
+          type="submit"
+          id="botaoLogin"
+        >
+          Entrar
+        </button>
+
+      </form>
+
+      <p
+        id="erroLogin"
+        class="admin-login-erro"
+      ></p>
+
+    </section>
+  </main>
+
+
+  <!-- PAINEL -->
+  <div
+    class="admin-app"
     id="painelCard"
     style="display: none;"
   >
 
-    <div
-      style="
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 20px;
-        flex-wrap: wrap;
-      "
-    >
-      <div>
-        <h2>Denúncias Recebidas</h2>
+    <!-- MENU LATERAL -->
+    <aside class="admin-sidebar">
 
-        <p id="dadosUsuarioLogado"></p>
+      <div class="admin-sidebar-topo">
+
+        <img
+          id="logoPainel"
+          src="/assets/logo-labor.png"
+          alt="Empresa"
+          class="admin-sidebar-logo"
+        >
+
+        <div class="admin-sidebar-empresa">
+          <strong id="nomeEmpresaPainel">
+            Empresa
+          </strong>
+
+          <span id="perfilUsuarioPainel">
+            Perfil
+          </span>
+        </div>
+
       </div>
+
+
+      <nav class="admin-menu">
+
+        <button
+          type="button"
+          class="admin-menu-item ativo"
+          data-tela="dashboard"
+          onclick="abrirTela('dashboard', this)"
+        >
+          Dashboard
+        </button>
+
+        <button
+          type="button"
+          class="admin-menu-item"
+          data-tela="denuncias"
+          onclick="abrirTela('denuncias', this)"
+        >
+          Denúncias
+        </button>
+
+        <button
+          type="button"
+          class="admin-menu-item somente-super-admin"
+          data-tela="empresas"
+          onclick="abrirTela('empresas', this)"
+        >
+          Empresas
+        </button>
+
+        <button
+          type="button"
+          class="admin-menu-item somente-super-admin"
+          data-tela="usuarios"
+          onclick="abrirTela('usuarios', this)"
+        >
+          Usuários
+        </button>
+
+        <button
+          type="button"
+          class="admin-menu-item"
+          data-tela="relatorios"
+          onclick="abrirTela('relatorios', this)"
+        >
+          Relatórios
+        </button>
+
+        <button
+          type="button"
+          class="admin-menu-item"
+          data-tela="logs"
+          onclick="abrirTela('logs', this)"
+        >
+          Logs
+        </button>
+
+        <button
+          type="button"
+          class="admin-menu-item"
+          data-tela="configuracoes"
+          onclick="abrirTela('configuracoes', this)"
+        >
+          Configurações
+        </button>
+
+      </nav>
+
+
+      <div class="admin-sidebar-rodape">
+
+        <div id="dadosUsuarioLogado"></div>
+
+        <button
+          type="button"
+          class="admin-btn-sair"
+          onclick="sair()"
+        >
+          Sair
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ÁREA PRINCIPAL -->
+    <div class="admin-main">
+
+      <!-- TOPO -->
+      <header class="admin-topbar">
+
+        <div>
+          <h1 id="tituloTela">
+            Dashboard
+          </h1>
+
+          <p id="subtituloTela">
+            Visão geral do Canal de Denúncias.
+          </p>
+        </div>
+
+        <div class="admin-topbar-usuario">
+
+          <span id="nomeUsuarioTopo">
+            Usuário
+          </span>
+
+          <span id="empresaUsuarioTopo">
+            Empresa
+          </span>
+
+        </div>
+
+      </header>
+
+
+      <!-- CONTEÚDO -->
+      <main class="admin-content">
+
+        <!-- DASHBOARD -->
+        <section
+          id="tela-dashboard"
+          class="admin-tela ativa"
+        >
+
+          <div
+            id="resumoDenuncias"
+            class="dashboard-resumo"
+          ></div>
+
+          <div class="admin-grid-2">
+
+            <section class="admin-bloco">
+
+              <h2>Visão Geral</h2>
+
+              <p>
+                Acompanhe os principais indicadores das ocorrências registradas.
+              </p>
+
+              <div id="dashboardIndicadores">
+                <p>
+                  Os indicadores detalhados serão exibidos aqui.
+                </p>
+              </div>
+
+            </section>
+
+
+            <section class="admin-bloco">
+
+              <h2>Atalhos</h2>
+
+              <div class="admin-atalhos">
+
+                <button
+                  type="button"
+                  onclick="abrirTelaPorNome('denuncias')"
+                >
+                  Ver denúncias
+                </button>
+
+                <button
+                  type="button"
+                  class="somente-super-admin"
+                  onclick="abrirTelaPorNome('empresas')"
+                >
+                  Gerenciar empresas
+                </button>
+
+                <button
+                  type="button"
+                  class="somente-super-admin"
+                  onclick="abrirTelaPorNome('usuarios')"
+                >
+                  Gerenciar usuários
+                </button>
+
+              </div>
+
+            </section>
+
+          </div>
+
+        </section>
+
+
+        <!-- DENÚNCIAS -->
+        <section
+          id="tela-denuncias"
+          class="admin-tela"
+        >
+
+          <section class="admin-bloco">
+
+            <div class="admin-bloco-cabecalho">
+
+              <div>
+                <h2>Denúncias</h2>
+
+                <p>
+                  Consulte, filtre e acompanhe as ocorrências registradas.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="admin-btn-secundario"
+                onclick="carregarDenuncias()"
+              >
+                Atualizar
+              </button>
+
+            </div>
+
+
+            <div class="admin-filtros">
+
+              <div>
+                <label for="filtroStatus">
+                  Filtrar por status
+                </label>
+
+                <select
+                  id="filtroStatus"
+                  onchange="aplicarFiltroStatus()"
+                >
+                  <option value="Todos">Todos</option>
+                  <option value="Recebida">Recebida</option>
+                  <option value="Em análise">Em análise</option>
+                  <option value="Em investigação">Em investigação</option>
+                  <option value="Concluída">Concluída</option>
+                  <option value="Arquivada">Arquivada</option>
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="listaDenuncias"
+              class="admin-lista-denuncias"
+            ></div>
+
+          </section>
+
+        </section>
+
+
+        <!-- EMPRESAS -->
+        <section
+          id="tela-empresas"
+          class="admin-tela"
+        >
+
+          <section class="admin-bloco">
+
+            <div class="admin-bloco-cabecalho">
+
+              <div>
+                <h2>Empresas</h2>
+
+                <p>
+                  Cadastre e gerencie os clientes da plataforma.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                id="botaoNovaEmpresa"
+              >
+                Nova Empresa
+              </button>
+
+            </div>
+
+            <div id="areaEmpresas">
+
+              <p>
+                O módulo de empresas será ativado na próxima etapa.
+              </p>
+
+            </div>
+
+          </section>
+
+        </section>
+
+
+        <!-- USUÁRIOS -->
+        <section
+          id="tela-usuarios"
+          class="admin-tela"
+        >
+
+          <section class="admin-bloco">
+
+            <div class="admin-bloco-cabecalho">
+
+              <div>
+                <h2>Usuários</h2>
+
+                <p>
+                  Gerencie usuários, empresas e perfis de acesso.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                id="botaoNovoUsuario"
+              >
+                Novo Usuário
+              </button>
+
+            </div>
+
+            <div id="areaUsuarios">
+
+              <p>
+                O módulo de usuários será ativado na próxima etapa.
+              </p>
+
+            </div>
+
+          </section>
+
+        </section>
+
+
+        <!-- RELATÓRIOS -->
+        <section
+          id="tela-relatorios"
+          class="admin-tela"
+        >
+
+          <section class="admin-bloco">
+
+            <h2>Relatórios</h2>
+
+            <p>
+              Exportações e relatórios gerenciais serão disponibilizados neste módulo.
+            </p>
+
+          </section>
+
+        </section>
+
+
+        <!-- LOGS -->
+        <section
+          id="tela-logs"
+          class="admin-tela"
+        >
+
+          <section class="admin-bloco">
+
+            <h2>Logs e Auditoria</h2>
+
+            <p>
+              O histórico de acessos e alterações será exibido aqui.
+            </p>
+
+          </section>
+
+        </section>
+
+
+        <!-- CONFIGURAÇÕES -->
+        <section
+          id="tela-configuracoes"
+          class="admin-tela"
+        >
+
+          <section class="admin-bloco">
+
+            <h2>Configurações</h2>
+
+            <p>
+              Configurações da empresa e do Canal de Denúncias.
+            </p>
+
+          </section>
+
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+
+  <!-- MODAL DETALHES -->
+  <div
+    id="modalDetalhes"
+    class="modal"
+  >
+
+    <div class="modal-conteudo">
 
       <button
         type="button"
-        onclick="sair()"
-        style="background: #555;"
+        class="modal-fechar"
+        onclick="fecharDetalhes()"
       >
-        Sair
+        Fechar
       </button>
+
+      <div id="conteudoDetalhes"></div>
+
     </div>
 
-    <div
-      id="resumoDenuncias"
-      class="dashboard-resumo"
-    ></div>
-
-    <label for="filtroStatus">
-      Filtrar por Status
-    </label>
-
-    <select
-      id="filtroStatus"
-      onchange="aplicarFiltroStatus()"
-    >
-      <option value="Todos">Todos</option>
-      <option value="Recebida">Recebida</option>
-      <option value="Em análise">Em análise</option>
-      <option value="Em investigação">Em investigação</option>
-      <option value="Concluída">Concluída</option>
-      <option value="Arquivada">Arquivada</option>
-    </select>
-
-    <button
-      type="button"
-      onclick="carregarDenuncias()"
-    >
-      Atualizar Lista
-    </button>
-
-    <div
-      id="listaDenuncias"
-      style="margin-top: 25px;"
-    ></div>
-
-  </section>
-
-</main>
-
-<div id="modalDetalhes" class="modal">
-  <div class="modal-conteudo">
-
-    <button
-      type="button"
-      class="modal-fechar"
-      onclick="fecharDetalhes()"
-    >
-      Fechar
-    </button>
-
-    <div id="conteudoDetalhes"></div>
-
   </div>
-</div>
 
-<script src="/js/admin.js"></script>
+
+  <script src="/js/admin.js"></script>
 
 </body>
 </html>
