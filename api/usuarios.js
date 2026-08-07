@@ -2,6 +2,10 @@ import {
   lerSessao
 } from "../lib/session.js";
 
+import {
+  registrarLogSistema
+} from "../lib/auditoria.js";
+
 function headersSupabase() {
   return {
     "Content-Type": "application/json",
