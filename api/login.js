@@ -85,6 +85,30 @@ export default async function handler(req, res) {
       });
     }
 
+    await registrarLogSistema({
+      req,
+      usuarioId:
+        usuarioAutenticado.id,
+    
+      empresaId:
+        usuarioAutenticado.empresa_id,
+    
+      tipoAcao:
+        "login_sucesso",
+    
+      recurso:
+        "autenticacao",
+    
+      recursoId:
+        usuarioAutenticado.id,
+    
+      descricao:
+        `Login realizado por ${usuarioAutenticado.nome}.`,
+    
+      sucesso: true
+    });
+
+    
     const tokenSessao = criarSessao(usuarioAutenticado);
 
     res.setHeader(
