@@ -3,6 +3,10 @@ import {
   criarSessao
 } from "../lib/session.js";
 
+import {
+  registrarLogSistema
+} from "../lib/auditoria.js";
+
 function normalizarTexto(valor) {
   return String(valor || "").trim();
 }
@@ -67,6 +71,15 @@ export default async function handler(req, res) {
         : null;
 
     if (!usuarioAutenticado) {
+      await registrarLogSistema({
+        req,
+        tipoAcao: "login_falhou",
+        recurso: "autenticacao",
+        descricao:
+          `Tentativa de login sem sucesso para o usuário: ${usuario}`,
+        sucesso: false
+      });
+    
       return res.status(401).json({
         erro: "Usuário ou senha inválidos."
       });
