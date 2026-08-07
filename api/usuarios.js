@@ -146,7 +146,11 @@ async function verificarLimiteUsuarios(empresaId, usuarioId = null) {
   }
 }
 
-async function salvarUsuario(req, res) {
+async function salvarUsuario(
+  req,
+  res,
+  sessao
+) {
   const dados = req.body || {};
 
   const id =
