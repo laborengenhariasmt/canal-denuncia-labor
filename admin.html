@@ -538,17 +538,80 @@
           id="tela-logs"
           class="admin-tela"
         >
-
+        
           <section class="admin-bloco">
-
-            <h2>Logs e Auditoria</h2>
-
-            <p>
-              O histórico de acessos e alterações será exibido aqui.
-            </p>
-
+        
+            <div class="admin-bloco-cabecalho">
+        
+              <div>
+                <h2>Logs e Auditoria</h2>
+        
+                <p>
+                  Histórico das alterações e providências registradas nas ocorrências.
+                </p>
+              </div>
+        
+              <button
+                type="button"
+                class="admin-btn-secundario"
+                onclick="carregarLogs()"
+              >
+                Atualizar
+              </button>
+        
+            </div>
+        
+            <div class="admin-filtros">
+        
+              <div>
+                <label for="filtroLogTipo">
+                  Tipo de ação
+                </label>
+        
+                <select
+                  id="filtroLogTipo"
+                  onchange="aplicarFiltrosLogs()"
+                >
+                  <option value="Todos">
+                    Todas
+                  </option>
+        
+                  <option value="alteracao_status">
+                    Alteração de status
+                  </option>
+        
+                  <option value="registro_acao">
+                    Registro de ação
+                  </option>
+                </select>
+              </div>
+        
+              <div>
+                <label for="filtroLogBusca">
+                  Buscar
+                </label>
+        
+                <input
+                  type="text"
+                  id="filtroLogBusca"
+                  placeholder="Protocolo, usuário ou empresa"
+                  oninput="aplicarFiltrosLogs()"
+                >
+              </div>
+        
+            </div>
+        
+            <div id="resumoLogs"></div>
+        
+            <div
+              id="areaLogs"
+              style="margin-top: 20px;"
+            >
+              Carregando histórico...
+            </div>
+        
           </section>
-
+        
         </section>
 
 
