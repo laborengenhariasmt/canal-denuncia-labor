@@ -33,11 +33,20 @@ function urlConsulta(codigo) {
 }
 
 function configurarPerfilPainel() {
-  document.body.classList.remove("usuario-super-admin");
+  const ehSuperAdmin =
+    usuarioLogado?.perfil === "super_admin";
 
-  if (usuarioLogado?.perfil === "super_admin") {
-    document.body.classList.add("usuario-super-admin");
-  }
+  document.body.classList.toggle(
+    "usuario-super-admin",
+    ehSuperAdmin
+  );
+
+  document
+    .querySelectorAll(".somente-super-admin")
+    .forEach(elemento => {
+      elemento.style.display =
+        ehSuperAdmin ? "" : "none";
+    });
 }
 
 function exibirDadosUsuario() {
